@@ -1,2 +1,2 @@
-# bill-splitter-web-app
-A web app that can split the bill for you with a click of your camera
+# insert-web-app-title
+### For contributors:
