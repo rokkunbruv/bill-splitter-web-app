@@ -44,7 +44,7 @@ Please refer to the following in managing Git branches:
 
 - Chat lang sa gc if naa moy i-implement na feature so that @rokkunbruv (aka Christian Brillos) can make a Github issue for you **OR** ikaw na lang maghimo sa issue (dapat ang name sa issue kay unsa nga feature ang imo i-implement. try to be specific as possible). Please refer to [this tutorial on Github issues](https://www.youtube.com/watch?v=TKJ4RdhyB5Y) on how to create/manage Github issues.
 - Each issue has its own corresponding Git branch where you can commit your changes. To create a branch for your issue, refer to [this tutorial on adding a branch to a Github issue](https://www.youtube.com/shorts/FJet4ySW_Ek)
-- Please commit your changes in your designated branch (depending sa unsa na feature imong i-implement). **NEVER** commit to the `main` branch (unless nahan mo mu-update sa README then pwede ra or any other reason).
-- If you're sure na ang imong i-implement na feature kay mana and error-free, please create a pull request para ma-merge siya sa `main` branch ni @rokkunbruv (aka Christian Brillos) and @conxant0 (aka Jezreel Chad)
+- Please commit your changes in your designated branch (depending sa unsa na feature imong i-implement). **NEVER** commit to the `main` branch (unless nahan mo mu-update sa README or any other reason then pwede ra).
+- If you're sure na ang imong i-implement na feature kay mana and error-free, please create a pull request para ma-merge siya sa `main` branch ni master @conxant0 (aka Jezreel Chad)
 
 If you have any inquiries, concerns, and violent reactions regarding this mini-guide, let @rokkunbruv (aka Christian Brillos) know so that he can change this README file for everyone to see sad tenkssssss  
