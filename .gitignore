@@ -6,3 +6,4 @@ client/build
 # SERVER-SIDE
 server/node_modules
 server/.env
+.env
