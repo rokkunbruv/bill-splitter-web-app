@@ -5,11 +5,11 @@ import base64Img from 'base64-img';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
-dotenv.config();
-
 // Get the current file path and directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const apiKey = process.env.OPENAI_API_KEY;
 
