@@ -13,6 +13,12 @@ const __dirname = path.dirname(__filename);
 
 const apiKey = process.env.OPENAI_API_KEY;
 
+if (!apiKey) {
+  console.log(apiKey);
+  console.error('Error: OPENAI_API_KEY is not defined. Please set it in your .env file.');
+  process.exit(1);
+}
+
 // Function to encode the image
 const encodeImage = (imagePath) => {
   return base64Img.base64Sync(imagePath);
