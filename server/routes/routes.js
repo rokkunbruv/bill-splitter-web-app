@@ -1,16 +1,24 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const path = require('path');
-const Tesseract = require('tesseract.js');
-const fs = require('fs');
-
-const app = express();
-const port = 5555;
-
-ES6
-
-
 import express from 'express';
-import bodyParser from 'body-parser';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { handleFileUpload } from '../services/chatgptService.js';
+
+const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../../uploads'));
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({ storage });
+
+router.post('/upload-receipt', upload.single('receipt'), handleFileUpload);
+
+export default router;
 
