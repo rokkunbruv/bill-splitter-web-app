@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5555;
 
 mongoose
-    .connect(process.env.CONNECTION_URL)
+    .connect(process.env.MONGODB_URL)
     .then(() => {
         console.log('App connected to database');
         app.listen(PORT, () => {
