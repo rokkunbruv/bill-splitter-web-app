@@ -40,3 +40,13 @@ export const deleteReceipt = (id) => async (dispatch) => {
         console.log(error);
     }
 }
+
+export const assignItemToUser = (receiptId, user, item) => async (dispatch) => {
+    try {
+        const { data } = await api.assignItemToUser(receiptId, user, item);
+        
+        dispatch({ type: 'UPDATE', payload: data });
+    } catch (error) {
+        console.log(error);
+    }
+}
