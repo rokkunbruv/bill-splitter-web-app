@@ -21,7 +21,17 @@ export const createReceipt = async (req, res) => {
 
     const gptResponse = await getReceiptInfo(receipt.uploadedFile) //chatgpt
     
-    const newReceipt = new ReceiptMessage({ ...receipt, gptResponse });
+
+    const usersWithItems = receipt.users.map((userName, index) => {
+        console.log(`Processing user ${index}: ${userName}`);
+        const items = []; 
+        const bill = 0;
+        return { userName, items, bill };
+    });
+
+    console.log("user:", usersWithItems);
+
+    const newReceipt = new ReceiptMessage({ ...receipt, gptResponse, gptCopy: gptResponse, usersWithItems });
 
     try {
         await newReceipt.save();
@@ -51,4 +61,23 @@ export const deleteReceipt = async (req, res) => {
     await ReceiptMessage.findByIdAndDelete(id);
 
     res.json({ message: 'Receipt deleted successfully' });
+}
+
+export const assignItemToUser = async (req, res) => {
+    const { id } = req.params;
+    const { user, item } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No receipt with that id');
+
+    const receipt = await ReceiptMessage.findById(id);
+    
+    const userIndex = receipt.usersWithItems.findIndex(u => u.userName === user);
+    if (userIndex !== -1) {
+        receipt.usersWithItems[userIndex].items.push(item);
+        receipt.usersWithItems[userIndex].bill += item.price * item.quantity;
+    }
+
+    const updatedReceipt = await ReceiptMessage.findByIdAndUpdate(id, receipt, { new: true });
+
+    res.json(updatedReceipt);
 }
