@@ -1,66 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper, IconButton } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import FileBase from 'react-file-base64';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { Card, CardActions, CardContent, Button, Typography, Box, Menu, MenuItem } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import { createReceipt, updateReceipt } from '../../actions/receipts';
+import { useDispatch } from 'react-redux';
+import { deleteReceipt, assignItemToUser } from '../../../actions/receipts';
 
-const Form = ({ currentId, setCurrentId }) => {
-    const [receiptData, setReceiptData] = useState({ event: '', users: [''], uploadedFile: '' });
-    const receipt = useSelector((state) => currentId ? state.receipts.find((p) => p._id === currentId ) : null);
+const Receipt = ({ receipt, setCurrentId }) => {
     const dispatch = useDispatch();
+    const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
 
-    useEffect(() => {
-        if (receipt) setReceiptData(receipt);
-    }, [receipt]);
+    const handleMenuOpen = (event, item) => {
+        setMenuAnchorEl(event.currentTarget);
+        setSelectedItem(item);
+    };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        if (currentId) {
-            dispatch(updateReceipt(currentId, receiptData));
-        } else {
-            dispatch(createReceipt(receiptData));
+    const handleMenuClose = () => {
+        setMenuAnchorEl(null);
+        setSelectedItem(null);
+    };
+
+    const handleAssignItem = (user) => {
+        if (selectedItem) {
+            dispatch(assignItemToUser(receipt._id, user, selectedItem));
         }
-        clear();
-    };
-
-    const clear = () => {
-        setCurrentId(null);
-        setReceiptData({ event: '', users: [''], uploadedFile: '' });
-    };
-
-    const handleUserChange = (index, value) => {
-        const newUsers = [...receiptData.users];
-        newUsers[index] = value;
-        setReceiptData({ ...receiptData, users: newUsers });
-    };
-
-    const addUserField = () => {
-        setReceiptData({ ...receiptData, users: [...receiptData.users, ''] });
+        handleMenuClose();
     };
 
     return (
-        <Paper sx={{ padding: 2 }}>
-            <form autoComplete='off' noValidate onSubmit={handleSubmit}>
-                <Typography variant="h6">Enter Receipt Info</Typography>
-                <TextField sx={{ marginTop: 2, marginBottom: 2 }} name="event" variant='outlined' label="Event" fullWidth value={receiptData.event} onChange={(e) => setReceiptData({ ...receiptData, event: e.target.value })}/>
-                {receiptData.users.map((user, index) => (
-                    <TextField key={index} sx={{ marginBottom: 2 }} name={`user-${index}`} variant='outlined' label={`User ${index + 1}`} fullWidth value={user} onChange={(e) => handleUserChange(index, e.target.value)}/>
-                ))}
-                <IconButton onClick={addUserField}>
-                    <AddCircleIcon />
-                    <Typography variant="body2">Add user</Typography>
-                </IconButton>
-                <div><FileBase type="file" multiple={false} onDone={({ base64 }) => setReceiptData({ ...receiptData, uploadedFile: base64 })}/></div>
-                <Button sx={{ marginTop: 2, marginBottom: 2 }} variant ="contained" color ="primary" size="large" type="submit" fullWidth>
-                    Upload
+        <Card sx={{ padding: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRadius: '15px', height: '100%', position: 'relative' }}>
+            <Typography variant='h6'>{receipt.event}</Typography>
+            <div>
+                <Button sx={{ color: 'black', position: 'absolute', top: '20px', right: '20px', border: 'solid', padding: 0, borderRadius: '15px', borderWidth: "1px" }} size="small" onClick={() => setCurrentId(receipt._id)}>
+                    <MoreHorizIcon fontSize='medium' />
                 </Button>
-                <Button variant ="contained" color ="secondary" size="small" onClick={clear} fullWidth>Cancel</Button>
-            </form>
-        </Paper>
+            </div>
+            {receipt.users.map((user, index) => (
+                <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginBottom: '5px', borderRadius: '5px', display: 'flex', flexDirection: 'row' }}>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>{user}</Typography>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Typography variant="body2" color="textSecondary" gutterBottom>Bill: {receipt.usersWithItems.find(u => u.userName === user)?.bill.toFixed(2) || '0.00'}</Typography>
+                </CardContent>
+            ))}
+            <Typography variant='body2'>Receipt</Typography>
+            {receipt.gptResponse.items.map((item, index) => (
+                <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginTop: '5px', borderRadius: '5px', position: 'relative' }}>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                        {item.name}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2" color="textSecondary">
+                            Price: {item.price.toFixed(2)}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            Quantity: {item.quantity}
+                        </Typography>
+                    </Box>
+                    <Button 
+                        sx={{ position: 'absolute', top: '5px', right: '5px', minWidth: 'auto', padding: '5px' }}
+                        aria-controls={`simple-menu-${index}`}
+                        aria-haspopup="true"
+                        onClick={(event) => handleMenuOpen(event, item)}
+                    >
+                        <ArrowDropDownIcon />
+                    </Button>
+                </CardContent>
+            ))}
+            <Menu
+                id="simple-menu"
+                anchorEl={menuAnchorEl}
+                keepMounted
+                open={Boolean(menuAnchorEl)}
+                onClose={handleMenuClose}
+            >
+                {receipt.users.map((user, userIndex) => (
+                    <MenuItem key={`menu-item-${userIndex}`} onClick={() => handleAssignItem(user)}>
+                        {user}
+                    </MenuItem>
+                ))}
+            </Menu>
+            <CardContent sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginTop: '5px', borderRadius: '5px' }}>
+                <Typography variant="body2" color="textSecondary" gutterBottom>Total: {receipt.gptResponse.total_cost.toFixed(2)}</Typography>
+            </CardContent>
+            <CardActions>
+                <Button size="small" color="primary" onClick={() => dispatch(deleteReceipt(receipt._id))}>
+                    <DeleteIcon fontSize='small' />
+                    Delete
+                </Button>
+            </CardActions>
+        </Card>
     );
-};
+}
 
-export default Form;
+export default Receipt;
