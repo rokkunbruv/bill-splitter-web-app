@@ -5,18 +5,28 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import { useDispatch } from 'react-redux';
-import { deleteReceipt } from '../../../actions/receipts';
+import { deleteReceipt, assignItemToUser } from '../../../actions/receipts';
 
 const Receipt = ({ receipt, setCurrentId }) => {
     const dispatch = useDispatch();
     const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
 
-    const handleMenuOpen = (event) => {
+    const handleMenuOpen = (event, item) => {
         setMenuAnchorEl(event.currentTarget);
+        setSelectedItem(item);
     };
 
     const handleMenuClose = () => {
         setMenuAnchorEl(null);
+        setSelectedItem(null);
+    };
+
+    const handleAssignItem = (user) => {
+        if (selectedItem) {
+            dispatch(assignItemToUser(receipt._id, user, selectedItem));
+        }
+        handleMenuClose();
     };
 
     return (
@@ -31,7 +41,7 @@ const Receipt = ({ receipt, setCurrentId }) => {
                 <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginBottom: '5px', borderRadius: '5px', display: 'flex', flexDirection: 'row' }}>
                     <Typography variant="body2" color="textSecondary" gutterBottom>{user}</Typography>
                     <Box sx={{ flexGrow: 1 }} />
-                    <Typography variant="body2" color="textSecondary" gutterBottom>Bill: 0.00</Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>Bill: {receipt.usersWithItems.find(u => u.userName === user)?.bill.toFixed(2) || '0.00'}</Typography>
                 </CardContent>
             ))}
             <Typography variant='body2'>Receipt</Typography>
@@ -48,28 +58,29 @@ const Receipt = ({ receipt, setCurrentId }) => {
                             Quantity: {item.quantity}
                         </Typography>
                     </Box>
-                    <Button sx={{ position: 'absolute', top: '5px', right: '5px', minWidth: 'auto', padding: '5px' }}
+                    <Button 
+                        sx={{ position: 'absolute', top: '5px', right: '5px', minWidth: 'auto', padding: '5px' }}
                         aria-controls={`simple-menu-${index}`}
                         aria-haspopup="true"
-                        onClick={handleMenuOpen}
+                        onClick={(event) => handleMenuOpen(event, item)}
                     >
                         <ArrowDropDownIcon />
                     </Button>
-                    <Menu
-                        id={`simple-menu-${index}`}
-                        anchorEl={menuAnchorEl}
-                        keepMounted
-                        open={Boolean(menuAnchorEl)}
-                        onClose={handleMenuClose}
-                    >
-                        {receipt.users.map((user, userIndex) => (
-                            <MenuItem key={`menu-item-${userIndex}`} onClick={handleMenuClose}>
-                                {user}
-                            </MenuItem>
-                        ))}
-                    </Menu>
                 </CardContent>
             ))}
+            <Menu
+                id="simple-menu"
+                anchorEl={menuAnchorEl}
+                keepMounted
+                open={Boolean(menuAnchorEl)}
+                onClose={handleMenuClose}
+            >
+                {receipt.users.map((user, userIndex) => (
+                    <MenuItem key={`menu-item-${userIndex}`} onClick={() => handleAssignItem(user)}>
+                        {user}
+                    </MenuItem>
+                ))}
+            </Menu>
             <CardContent sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginTop: '5px', borderRadius: '5px' }}>
                 <Typography variant="body2" color="textSecondary" gutterBottom>Total: {receipt.gptResponse.total_cost.toFixed(2)}</Typography>
             </CardContent>
