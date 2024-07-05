@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardActions, CardContent, Button, Typography, Box, Menu, MenuItem } from '@mui/material';
+import { Card, CardActions, CardContent, Button, Typography, Box, Menu, MenuItem, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -11,6 +11,7 @@ const Receipt = ({ receipt, setCurrentId }) => {
     const dispatch = useDispatch();
     const [menuAnchorEl, setMenuAnchorEl] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [quantities, setQuantities] = useState({});
 
     const handleMenuOpen = (event, item) => {
         setMenuAnchorEl(event.currentTarget);
@@ -22,11 +23,19 @@ const Receipt = ({ receipt, setCurrentId }) => {
         setSelectedItem(null);
     };
 
+    const handleQuantityChange = (user, value) => {
+        const quantity = Math.min(Math.max(1, parseInt(value) || 0), selectedItem.quantity);
+        setQuantities({ ...quantities, [user]: quantity });
+    };
+
     const handleAssignItem = (user) => {
         if (selectedItem) {
-            dispatch(assignItemToUser(receipt._id, user, selectedItem));
+            const quantity = quantities[user] || 1;
+            const itemToAssign = { ...selectedItem, quantity };
+            dispatch(assignItemToUser(receipt._id, user, itemToAssign));
         }
         handleMenuClose();
+        setQuantities({});
     };
 
     return (
@@ -38,14 +47,14 @@ const Receipt = ({ receipt, setCurrentId }) => {
                 </Button>
             </div>
             {receipt.users.map((user, index) => (
-                <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginBottom: '5px', borderRadius: '5px', display: 'flex', flexDirection: 'row' }}>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>{user}</Typography>
+                <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginBottom: '5px', borderRadius: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Typography variant="body2" color="textSecondary">{user}</Typography>
                     <Box sx={{ flexGrow: 1 }} />
-                    <Typography variant="body2" color="textSecondary" gutterBottom>Bill: {receipt.usersWithItems.find(u => u.userName === user)?.bill.toFixed(2) || '0.00'}</Typography>
+                    <Typography variant="body2" color="textSecondary">Bill: {receipt.usersWithItems.find(u => u.userName === user)?.bill.toFixed(2) || '0.00'}</Typography>
                 </CardContent>
             ))}
             <Typography variant='body2'>Receipt</Typography>
-            {receipt.gptResponse.items.map((item, index) => (
+            {receipt.gptCopy.items.map((item, index) => (
                 <CardContent key={index} sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginTop: '5px', borderRadius: '5px', position: 'relative' }}>
                     <Typography variant="body2" color="textSecondary" gutterBottom>
                         {item.name}
@@ -58,7 +67,7 @@ const Receipt = ({ receipt, setCurrentId }) => {
                             Quantity: {item.quantity}
                         </Typography>
                     </Box>
-                    <Button 
+                    <Button
                         sx={{ position: 'absolute', top: '5px', right: '5px', minWidth: 'auto', padding: '5px' }}
                         aria-controls={`simple-menu-${index}`}
                         aria-haspopup="true"
@@ -76,13 +85,21 @@ const Receipt = ({ receipt, setCurrentId }) => {
                 onClose={handleMenuClose}
             >
                 {receipt.users.map((user, userIndex) => (
-                    <MenuItem key={`menu-item-${userIndex}`} onClick={() => handleAssignItem(user)}>
-                        {user}
+                    <MenuItem key={`menu-item-${userIndex}`} sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography onClick={() => handleAssignItem(user)}>{user}</Typography>
+                        <TextField
+                            sx={{ marginLeft: 2, width: '60px' }}
+                            type="number"
+                            size="small"
+                            value={quantities[user] || ''}
+                            onChange={(e) => handleQuantityChange(user, e.target.value)}
+                            inputProps={{ min: 1, max: selectedItem ? selectedItem.quantity : 1 }}
+                        />
                     </MenuItem>
                 ))}
             </Menu>
             <CardContent sx={{ border: 'solid', borderWidth: "1px", padding: 1, marginTop: '5px', borderRadius: '5px' }}>
-                <Typography variant="body2" color="textSecondary" gutterBottom>Total: {receipt.gptResponse.total_cost.toFixed(2)}</Typography>
+                <Typography variant="body2" color="textSecondary" gutterBottom>Total: {receipt.gptCopy.total_cost.toFixed(2)}</Typography>
             </CardContent>
             <CardActions>
                 <Button size="small" color="primary" onClick={() => dispatch(deleteReceipt(receipt._id))}>
