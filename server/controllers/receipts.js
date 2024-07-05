@@ -19,7 +19,35 @@ export const getReceipts =  async (req, res) => {
 export const createReceipt = async (req, res) => {
     const receipt = req.body;
 
-    const gptResponse = await getReceiptInfo(receipt.uploadedFile) //chatgpt
+    const gptResponse =  {
+        "items": [
+            {
+                "name": "T-Shirt Blue",
+                "price": 21.9,
+                "quantity": 2
+            },
+            {
+                "name": "T-Shirt Green ",
+                "price": 12.99,
+                "quantity": 4
+            },
+            {
+                "name": "Pants",
+                "price": 35.99,
+                "quantity": 4
+            },
+            {
+                "name": "Socks",
+                "price": 4,
+                "quantity": 2
+            }
+        ],
+        "total_num_items": 4,
+        "total_cost": 247.72,
+        "payment": 300,
+        "change": 52.28
+    }
+     //getReceiptInfo(receipt.uploadedFile) //chatgpt //giconstant lang sa para dili gasto HAHAHAHA
     
 
     const usersWithItems = receipt.users.map((userName, index) => {
@@ -70,14 +98,32 @@ export const assignItemToUser = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No receipt with that id');
 
     const receipt = await ReceiptMessage.findById(id);
-    
+
     const userIndex = receipt.usersWithItems.findIndex(u => u.userName === user);
     if (userIndex !== -1) {
-        receipt.usersWithItems[userIndex].items.push(item);
+        // Find if the item already exists for the user
+        const existingItemIndex = receipt.usersWithItems[userIndex].items.findIndex(i => i.name === item.name);
+
+        if (existingItemIndex !== -1) {
+            // If item exists, update the quantity and bill
+            receipt.usersWithItems[userIndex].items[existingItemIndex].quantity += item.quantity;
+        } else {
+            // If item does not exist, add it to the user's items
+            receipt.usersWithItems[userIndex].items.push(item);
+        }
         receipt.usersWithItems[userIndex].bill += item.price * item.quantity;
+
+        // Update gptCopy
+        const gptCopyItemIndex = receipt.gptCopy.items.findIndex(gptItem => gptItem.name === item.name);
+        if (gptCopyItemIndex !== -1) {
+            receipt.gptCopy.items[gptCopyItemIndex].quantity -= item.quantity;
+            if (receipt.gptCopy.items[gptCopyItemIndex].quantity <= 0) {
+                receipt.gptCopy.items.splice(gptCopyItemIndex, 1);
+            }
+        }
     }
 
     const updatedReceipt = await ReceiptMessage.findByIdAndUpdate(id, receipt, { new: true });
 
     res.json(updatedReceipt);
-}
+};
