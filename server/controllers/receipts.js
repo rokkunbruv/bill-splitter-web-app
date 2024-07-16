@@ -19,37 +19,36 @@ export const getReceipts =  async (req, res) => {
 export const createReceipt = async (req, res) => {
     const receipt = req.body;
 
-    const gptResponse =  {
-        "items": [
-            {
-                "name": "T-Shirt Blue",
-                "price": 21.9,
-                "quantity": 2
-            },
-            {
-                "name": "T-Shirt Green ",
-                "price": 12.99,
-                "quantity": 4
-            },
-            {
-                "name": "Pants",
-                "price": 35.99,
-                "quantity": 4
-            },
-            {
-                "name": "Socks",
-                "price": 4,
-                "quantity": 2
-            }
-        ],
-        "total_num_items": 4,
-        "total_cost": 247.72,
-        "payment": 300,
-        "change": 52.28
-    }
-     //getReceiptInfo(receipt.uploadedFile) //chatgpt //giconstant lang sa para dili gasto HAHAHAHA
+    // const gptResponse =  {
+    //     "items": [
+    //         {
+    //             "name": "T-Shirt Blue",
+    //             "price": 21.9,
+    //             "quantity": 2
+    //         },
+    //         {
+    //             "name": "T-Shirt Green ",
+    //             "price": 12.99,
+    //             "quantity": 4
+    //         },
+    //         {
+    //             "name": "Pants",
+    //             "price": 35.99,
+    //             "quantity": 4
+    //         },
+    //         {
+    //             "name": "Socks",
+    //             "price": 4,
+    //             "quantity": 2
+    //         }
+    //     ],
+    //     "total_num_items": 4,
+    //     "total_cost": 247.72,
+    //     "payment": 300,
+    //     "change": 52.28
+    // }
+    const gptResponse =  await getReceiptInfo(receipt.uploadedFile); //chatgpt //giconstant lang sa para dili gasto HAHAHAHA
     
-
     const usersWithItems = receipt.users.map((userName, index) => {
         console.log(`Processing user ${index}: ${userName}`);
         const items = []; 

@@ -1,7 +1,15 @@
 import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const openai = new OpenAI({
-    apiKey: ''
+    apiKey: process.env.OPENAI_API_KEY
 });
 
 const prompt_text = "Scan the receipt and return a JSON object with the following structure: items (array of objects with fields: name, price(per one quantity), quantity), total_num_items (integer), total_cost (float), payment (number or null), change (number or null). Return a raw JSON text not encapsulated by text formatting as the result.";
