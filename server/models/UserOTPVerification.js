@@ -3,10 +3,22 @@ import mongoose from "mongoose"
 const Schema = mongoose.Schema;
 
 const UserOTPVerificationSchema = new Schema({
-    userId: String,
-    otp: String,
-    createdAt: Date,
-    expiresAt: Date,
+    userId: {
+        type: String,
+        required: true
+    },
+    otp: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true
+    },
+    expiresAt: {
+        type: Date,
+        required: true
+    }
 });
 
 const UserOTPVerification = mongoose.model(

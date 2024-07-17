@@ -17,6 +17,14 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    resetCode: {
+        type: String,
+        default: null,
+    },
+    resetCodeExpiresAt: {
+        type: Date,
+        required: true
+    }
 });
 
 const User = mongoose.model("User", userSchema);

@@ -1,21 +1,22 @@
 
 import bcrypt from 'bcrypt';
-import User from '../models/userModels.js';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+
+import User from '../models/userModels.js';
 import UserOTPVerification from '../models/UserOTPVerification.js';
-//import nodemailer from 'nodemailer';
 
-//nodemailer stuff
-let transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth:{
-    user:process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASS,
-  },
-});
+let forgotPasswordEmail = '';
 
+// what do i want to do:
+// 1. signup should remain as is
+// 3. find a way such that the otp schema will get expired
+// 4. make a controller that checks if the inputted otp is same as the sent otp
+//    - if it matches, it should return the jwt token of that user so that they can actually access the app
+
+// requests: email and password
+// responds: user object and token
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -43,6 +44,8 @@ const login = async (req, res) => {
   }
 };
 
+// requests: name, email, password, confirmPassword
+// responds: user object and token
 const signup = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -86,117 +89,220 @@ const signup = async (req, res) => {
 
     await newUser.save();
 
-    const sendOTPVerificationEmail = async ({ _id, email }) => {
-      try{
-        const otp  = `${Math.floor(100000 + Math.random() * 900000)}`;
-    
-        //mail options
-        const mailOptions = {
-          from: process.env.AUTH_EMAIL,
-          to: email,
-          subject: "Verify your email",
-          html: `<p>Enter <b>${otp}</b> in the app to verify your email address</p><p>This code will <b>expire in hour</b></p>`,
-    
-        };
-    
-        const saltRounds = 10;
-        
-
-
-        const hashedOTP = await bcrypt.hash(otp, saltRounds);
-
-        const newOTP = new UserOTPVerification({
-          userId: _id,
-          otp: hashedOTP,
-          createdAt: Date.now(),
-          expiresAt: Date.now() + 3600000,
-        });
-        //save otp record
-        await newOTP.save();
-        await transporter.sendMail(mailOptions);
-      }catch(error){
-        console.error(error);
-      }
-    };
-    sendOTPVerificationEmail({ newUser });
-
-    const token = jwt.sign({ userId: User._id }, process.env.SECRET, { expiresIn: '1h' });
-
-    res.status(201).json({ message: 'Signup successful', user: newUser, token: token });
+    res.status(200).json({ message: 'Signup successful', user: newUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// verify otp email
+// requests: user object
+// responds: message
+const sendOTPVerificationEmail = async (req, res) => {
+  try{
+    const { email } = req.body;
+
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth:{
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASS,
+      },
+    });
+
+    if (!email) {
+      res.status(400).json({ message: "Email not found"});
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user._id) {
+      res.status(400).json({ message: "User not found"});
+    }
+    
+    // generate 6-digit otp
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+
+    // verify signup email format
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: 'Verify Signup Code',
+      html: `<h2>Hello ${user.name}</h2> 
+            <p>We need to verify your account to continue with the signup. Please use the following 6-digit code:</p>
+            <h3>${otp}</h3>`,
+    };
+
+    const saltRounds = 10;
+    const hashedOTP = await bcrypt.hash(otp, saltRounds);
+
+    const newOTP = new UserOTPVerification({
+      userId: user._id,
+      otp: hashedOTP,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 3600000,
+    });
+
+    await newOTP.save();
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'Email verification sent' });
+  }catch(error){
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// requests: userId and otp
+// responds: jwt token
 const verifyOTP = async (req, res) => {
   try {
     let { userId, otp } = req.body;
+
     if (!userId || !otp) {
-      throw Error("Empty otp details are not allowed");
-    }else {
-      const UserOTPVerificationRecords = await UserOTPVerification.find({
-        userId,
-      });
-      if (UserOTPVerificationRecords.length <= 0) {
-        // no record found
-        throw new Error(
-          "Account record doesn't exist or has been verified already. Please sign up or log in"
-        );
-      } else {
-        //user otp record exists
-        const { expiresAt } = UserOTPVerificationRecords[0];
-        const hashedOTP = UserOTPVerificationRecords[0].otp;
-
-        if(expiresAt < Date.now()) {
-          //user otp record has expired
-          await UserOTPVerification.deleteMany({ userId });
-          throw new Error("Code has expired. Please request again.");
-        } else {
-          const validOTP = await bcrypt.compare(otp, hashedOTP);
-
-          if (!validOTP) {
-            //supplied otp is wrong
-            throw new Error("Invalid code passed. Check your inbox.");
-          } else {
-            //success code
-            await User.updateOne({ _id: userId }, {verified: true});
-            await UserOTPVerification.deleteMany({ userId });
-            res.json({
-              status: "VERIFIED",
-              message: `User email verified successfully.`,
-            });
-          }
-        }
-      }
+      return res.status(400).json({ message: "Empty OTP details are not allowed"});
     }
-  } catch (error) {
-    res.json({
-      status: "FAILED",
-      message: error.message,
-    });
-  }
-};
+    
+    const UserOTPVerificationRecords = await UserOTPVerification.find({ userId });
 
-//resending otp
-const resendOTP = async (req, res) => {
-  try {
-    let { userId, email } = req.body;
+    if (UserOTPVerificationRecords.length <= 0) {
+      return res.status(400).json({ mesage: "Account record doesn't exist or has been verified already. Please sign up or log in" });
+    } 
 
-    if(!userId || !email) {
-      throw Error("Empty user details are not allowed");
-    } else {
-      //delete existing records and resend
+    if (UserOTPVerificationRecords[0].expiresAt < Date.now()) {
       await UserOTPVerification.deleteMany({ userId });
-      sendOTPVerificationEmail({_id: userId, email}, res);
+      return res.status(400).json({ message: "Code has expired. Please request again." });
     }
+
+    const validOTP = await bcrypt.compare(otp, UserOTPVerificationRecords[0].otp);
+
+    if (!validOTP) {
+      return res.status(400).json({ message: "Invalid code passed. Check your inbox." });
+    }
+
+    await User.updateOne({ _id: userId }, {verified: true});
+    await UserOTPVerification.deleteMany({ userId });
+
+    // if account has been verified successfully, it will generate a token
+    // which will allow the user to access the app
+    const token = jwt.sign({ userId: User._id }, process.env.SECRET, { expiresIn: '1h' });
+
+    res.status(200).json({ message: `User email verified successfully.`, token: token });
   } catch (error) {
-    res.json({
-      status: "FAILED",
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-export { login, signup, verifyOTP, resendOTP };
+// requests: email
+// responds: message
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    // generate otp
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    forgotPasswordEmail = email;
+
+    user.resetCode = resetCode;
+    user.resetCodeExpiresAt = Date.now() + 300000;
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: 'Password Reset Code',
+      html: `<h2>Hello ${user.name}</h2> 
+            <p>You have requested a password reset. Please use the following 6-digit code:</p>
+            <h3>${resetCode}</h3>`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Failed to send password reset code' });
+      }
+      console.log('Password reset code sent:', info.response);
+      res.status(200).json({ message: 'Password reset code has been sent to your email' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// requests: resetCode, password, confirmPassword
+// responds: message
+const resetPassword = async (req, res) => {
+  try {
+    const { resetCode, password, confirmPassword } = req.body;
+
+    if (!resetCode) {
+      return res.status(400).json({ message: 'Invalid reset code'});
+    }
+
+    const email = forgotPasswordEmail;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    if (user.resetCodeExpiresAt < Date.now()) {
+      user.resetCode = '';
+      return res.status(400).json({ message: 'OTP has expired.' });
+    }
+
+    if (resetCode !== user.resetCode) {
+      return res.status(400).json({ message: 'Invalid reset code' });
+    }
+
+    if(!password || !confirmPassword) {
+      return res.status(400).json({ message: 'All fields must be filled' });
+    }
+
+    const isPasswordStrong = validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      returnScore: false,
+    });
+
+    if (!isPasswordStrong) {
+      return res.status(400).json({ message: 'Password should be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one symbol.' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.resetCode = ''; // Clear the reset code
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { login, signup, verifyOTP, sendOTPVerificationEmail, resetPassword, forgotPassword };
