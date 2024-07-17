@@ -5,4 +5,3 @@ client/build
 
 # SERVER-SIDE
 server/node_modules
-.env
