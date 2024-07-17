@@ -1,30 +1,22 @@
 import mongoose from 'mongoose';
 
-const itemSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    quantity: Number
-});
-
-const userWithItemsSchema = new mongoose.Schema({
-    userName: String,
-    items: [itemSchema],
-    bill: {
-        type: Number,
-        default: 0
-    }
-});
-
 const receiptSchema = mongoose.Schema({
     event: String,
-    users: [ String ],
+    users: [String], // Make sure this line is included
     uploadedFile: String,
     gptResponse: mongoose.Schema.Types.Mixed,
     gptCopy: mongoose.Schema.Types.Mixed,
-    usersWithItems: [userWithItemsSchema],
+    usersWithItems: [{
+        userName: String,
+        items: [{
+            name: String,
+            price: Number,
+            quantity: Number
+        }],
+        bill: Number
+    }],
 });
 
 const ReceiptMessage = mongoose.model('ReceiptMessage', receiptSchema);
 
 export default ReceiptMessage;
-

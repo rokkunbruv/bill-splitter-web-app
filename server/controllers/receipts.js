@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import ReceiptMessage from '../models/receiptMessage.js';
 import getReceiptInfo from '../services/openai.js';
+import Member from '../models/member.js'; // Import the Member model
 
 export const getReceipts =  async (req, res) => {
     try {
@@ -19,55 +20,71 @@ export const getReceipts =  async (req, res) => {
 export const createReceipt = async (req, res) => {
     const receipt = req.body;
 
-    // const gptResponse =  {
-    //     "items": [
-    //         {
-    //             "name": "T-Shirt Blue",
-    //             "price": 21.9,
-    //             "quantity": 2
-    //         },
-    //         {
-    //             "name": "T-Shirt Green ",
-    //             "price": 12.99,
-    //             "quantity": 4
-    //         },
-    //         {
-    //             "name": "Pants",
-    //             "price": 35.99,
-    //             "quantity": 4
-    //         },
-    //         {
-    //             "name": "Socks",
-    //             "price": 4,
-    //             "quantity": 2
-    //         }
-    //     ],
-    //     "total_num_items": 4,
-    //     "total_cost": 247.72,
-    //     "payment": 300,
-    //     "change": 52.28
-    // }
-    const gptResponse =  await getReceiptInfo(receipt.uploadedFile); //chatgpt //giconstant lang sa para dili gasto HAHAHAHA
-    
-    const usersWithItems = receipt.users.map((userName, index) => {
-        console.log(`Processing user ${index}: ${userName}`);
-        const items = []; 
-        const bill = 0;
-        return { userName, items, bill };
-    });
-
-    console.log("user:", usersWithItems);
-
-    const newReceipt = new ReceiptMessage({ ...receipt, gptResponse, gptCopy: gptResponse, usersWithItems });
+    const gptResponse =  {
+        "items": [
+            {
+                "name": "T-Shirt Blue",
+                "price": 21.9,
+                "quantity": 2
+            },
+            {
+                "name": "T-Shirt Green ",
+                "price": 12.99,
+                "quantity": 4
+            },
+            {
+                "name": "Pants",
+                "price": 35.99,
+                "quantity": 4
+            },
+            {
+                "name": "Socks",
+                "price": 4,
+                "quantity": 2
+            }
+        ],
+        "total_num_items": 4,
+        "total_cost": 247.72,
+        "payment": 300,
+        "change": 52.28
+    }
 
     try {
+         //Fetch all members
+        const members = await Member.find().exec();
+
+        // Check if receipt.users exists, if not, initialize it as an empty array
+        const users = receipt.users || [];
+
+        // Map members to usersWithItems
+        const usersWithItems = users.map((user) => ({
+            userName: user,
+            items: [],
+            bill: 0
+        }));
+
+        // Create a new ReceiptMessage document
+        const newReceipt = new ReceiptMessage({
+            event: receipt.event,
+            uploadedFile: receipt.uploadedFile,
+            gptResponse: gptResponse,
+            gptCopy: gptResponse,
+            usersWithItems: usersWithItems,
+            users: users, // Store the list of users from the receipt
+            members: members // Store the list of members
+        });
+
+        // Save the newReceipt to the database
         await newReceipt.save();
 
+        // Respond with the created newReceipt
         res.status(201).json(newReceipt);
     } catch (error) {
-        res.status(409).json( { message: error.message });
+        // Handle errors if any
+        res.status(409).json({ message: error.message });
     }
 };
+
 
 export const updateReceipt = async (req, res) => {
     const { id: _id } = req.params;
@@ -123,6 +140,27 @@ export const assignItemToUser = async (req, res) => {
     }
 
     const updatedReceipt = await ReceiptMessage.findByIdAndUpdate(id, receipt, { new: true });
+
+    res.json(updatedReceipt);
+};
+
+export const updateReceiptSplit = async (req, res) => {
+    const { id } = req.params;
+    const usersSplit = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No receipt with that id');
+
+    const updatedReceipt = await ReceiptMessage.findById(id);
+
+    if (!updatedReceipt) return res.status(404).send('Receipt not found');
+
+    updatedReceipt.usersWithItems = Object.entries(usersSplit).map(([userName, data]) => ({
+        userName,
+        items: data.items,
+        bill: data.total
+    }));
+
+    await updatedReceipt.save();
 
     res.json(updatedReceipt);
 };

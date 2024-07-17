@@ -1,4 +1,4 @@
-export default ( receipts = [], action) => {
+export default (receipts = [], action) => {
     switch (action.type) {
         case 'DELETE':
             return receipts.filter((receipt) => receipt._id !== action.payload);
@@ -7,9 +7,8 @@ export default ( receipts = [], action) => {
         case 'FETCH_ALL':
             return action.payload;
         case 'CREATE':
-            return [ ...receipts, action.payload];
+            return [...receipts, action.payload];
         default:
             return receipts;
     }
-
-}
+};

@@ -1,9 +1,0 @@
-# CLIENT-SIDE
-
-client/node_modules
-client/build
-
-# SERVER-SIDE
-server/node_modules
-server/.env
-.env
