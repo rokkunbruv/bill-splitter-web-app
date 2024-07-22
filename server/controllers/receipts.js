@@ -20,6 +20,8 @@ export const getReceipts =  async (req, res) => {
 export const createReceipt = async (req, res) => {
     const receipt = req.body;
 
+    // const gptResponse = await getReceiptInfo(receipt.uploadedFile)
+
     const gptResponse =  {
         "items": [
             {
