@@ -53,7 +53,7 @@ const FinalSplit = () => {
                     );
                 })}
             </Grid>
-            <Button component={Link} to="/" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+            <Button component={Link} to="/receipts" variant="contained" color="primary" sx={{ marginTop: 2 }}>
                 Back to Receipts
             </Button>
         </div>
