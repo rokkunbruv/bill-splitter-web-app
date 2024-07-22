@@ -32,7 +32,7 @@ const BottomNavigator = () => {
                 navigate('/members');
                 break;
             case 4:
-                navigate('/account');
+                navigate('/profile');
                 break;
             default:
                 navigate('/');

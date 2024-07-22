@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { TextField, Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
 import FileBase from 'react-file-base64';
+import Webcam from 'react-webcam';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { createReceipt } from '../../actions/receipts';
 import { getMembers } from '../../actions/members';
+// import { Link } from 'react-router-dom';
 
 const Form = () => {
-    const [receiptData, setReceiptData] = useState({ event: '', uploadedFile: '', users: [] }); // Changed to 'users' for selected members
+    const [receiptData, setReceiptData] = useState({ event: '', uploadedFile: '', users: [] });
+    const [fileSelected, setFileSelected] = useState(false);
+    const [error, setError] = useState('');
+    const [useCamera, setUseCamera] = useState(true); // Default to camera view
+    const webcamRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const members = useSelector((state) => state.members);
@@ -16,22 +22,50 @@ const Form = () => {
         dispatch(getMembers());
     }, [dispatch]);
 
+    useEffect(() => {
+        // Para automatic camera on
+        setUseCamera(true);
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Update receiptData with selected members and other info
-        const updatedReceiptData = { ...receiptData }; // Copy current state
+        if (!fileSelected) {
+            setError('Please select a file or capture an image before submitting.');
+            return;
+        }
+        //ma update
+        const updatedReceiptData = { ...receiptData };
         dispatch(createReceipt(updatedReceiptData));
         clear();
-        navigate('/');
+        navigate('/receipts');
     };
 
     const clear = () => {
-        setReceiptData({ event: '', uploadedFile: '', users: [] }); // Clear state properly
+        setReceiptData({ event: '', uploadedFile: '', users: [] });
+        setFileSelected(false);
+        setError('');
     };
 
     const handleMemberSelectChange = (e) => {
         setReceiptData({ ...receiptData, users: e.target.value });
     };
+
+    const handleFileUpload = ({ base64 }) => {
+        setReceiptData({ ...receiptData, uploadedFile: base64 });
+        setFileSelected(true);
+        setError('');
+    };
+
+    const capture = useCallback(() => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        if (imageSrc) {
+            setReceiptData({ ...receiptData, uploadedFile: imageSrc });
+            setFileSelected(true);
+            setError('');
+        } else {
+            setError('Failed to capture image. Please try again.');
+        }
+    }, [webcamRef, receiptData]);
 
     return (
         <Paper sx={{ padding: 2 }}>
@@ -61,8 +95,48 @@ const Form = () => {
                         ))}
                     </Select>
                 </FormControl>
-                <div><FileBase type="file" multiple={false} onDone={({ base64 }) => setReceiptData({ ...receiptData, uploadedFile: base64 })}/></div>
-                <Button sx={{ marginTop: 2, marginBottom: 2 }} variant="contained" color="primary" size="large" type="submit" fullWidth>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+                    <Button 
+                        variant="outlined" 
+                        color="primary" 
+                        onClick={() => setUseCamera(!useCamera)}
+                        sx={{ marginBottom: 2 }}
+                    >
+                        {useCamera ? 'Switch to File Upload' : 'Switch to Camera'}
+                    </Button>
+                    {useCamera ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Webcam
+                                audio={false}
+                                ref={webcamRef}
+                                screenshotFormat="image/jpeg"
+                                width="100%"
+                                height="auto"
+                            />
+                            <Button variant="contained" color="primary" onClick={capture} sx={{ marginTop: 2 }}>
+                                Capture Photo
+                            </Button>
+                        </Box>
+                    ) : (
+                        <div>
+                            <FileBase type="file" multiple={false} onDone={handleFileUpload} />
+                        </div>
+                    )}
+                </Box>
+                {error && (
+                    <Typography color="error" sx={{ marginTop: 2, marginBottom: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+                <Button 
+                    sx={{ marginTop: 2, marginBottom: 2 }} 
+                    variant="contained" 
+                    color="primary" 
+                    size="large" 
+                    type="submit" 
+                    fullWidth 
+                    disabled={!fileSelected}
+                >
                     Upload
                 </Button>
             </form>
