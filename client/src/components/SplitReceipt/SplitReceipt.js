@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardContent, Typography, Button, TextField, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
+import Slider from 'react-slick';  // Import react-slick
 import { getReceipts, updateReceiptSplit } from '../../actions/receipts';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+import { ReactComponent as RoundedArrowLeft } from '../icons/roundedArrowLeft.svg';
+import { ReactComponent as RoundedArrowRight } from '../icons/roundedArrowRight.svg';
+import QuantityDrawer from '../SplitDetailDrawer/SplitDetailDrawer';  
 
 const SplitReceipt = () => {
     const { id } = useParams();
@@ -10,6 +17,10 @@ const SplitReceipt = () => {
     const dispatch = useDispatch();
     const receipt = useSelector((state) => state.receipts.find((r) => r._id === id));
     const [splitItems, setSplitItems] = useState({});
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedItemName, setSelectedItemName] = useState('');
+    const [selectedUser, setSelectedUser] = useState('');
+    const [quantity, setQuantity] = useState(0);
 
     useEffect(() => {
         if (!receipt) {
@@ -30,14 +41,31 @@ const SplitReceipt = () => {
     if (!receipt) return 'Loading...';
 
     const handleQuantityChange = (itemName, user, value) => {
-        const quantity = Math.min(Math.max(0, parseInt(value) || 0), receipt.gptCopy.items.find(item => item.name === itemName).quantity);
+        const maxQuantity = receipt.gptCopy.items.find(item => item.name === itemName).quantity;
+        const adjustedQuantity = Math.min(Math.max(0, value), maxQuantity);
         setSplitItems(prev => ({
             ...prev,
             [itemName]: {
                 ...prev[itemName],
-                [user]: quantity
+                [user]: adjustedQuantity
             }
         }));
+    };
+
+    const handleDrawerOpen = (itemName, user, currentQuantity) => {
+        setSelectedItemName(itemName);
+        setSelectedUser(user);
+        setQuantity(currentQuantity);
+        setDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setDrawerOpen(false);
+    };
+
+    const handleQuantityUpdate = (newQuantity) => {
+        handleQuantityChange(selectedItemName, selectedUser, newQuantity);
+        handleDrawerClose();
     };
 
     const handleSplitReceipt = () => {
@@ -61,34 +89,54 @@ const SplitReceipt = () => {
         navigate(`/final-split/${id}`);
     };
 
+    // Slick slider settings
+    const sliderSettings = {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        prevArrow: <RoundedArrowLeft />,
+        nextArrow: <RoundedArrowRight />,
+    };
+
     return (
         <div>
             <Typography variant="h4" gutterBottom>Split Receipt: {receipt.event}</Typography>
-            {receipt.gptCopy.items.map((item) => (
-                <Card key={item.name} sx={{ marginBottom: 2 }}>
-                    <CardContent>
-                        <Typography variant="h6">{item.name}</Typography>
-                        <Typography>Price: ${item.price.toFixed(2)} | Quantity: {item.quantity}</Typography>
-                        <Grid container spacing={2}>
-                            {(receipt.usersWithItems || []).map((user) => (
-                                <Grid item xs={12} sm={6} md={4} key={user.userName}>
-                                    <TextField
-                                        label={user.userName}
-                                        type="number"
-                                        value={splitItems[item.name]?.[user.userName] || ''}
-                                        onChange={(e) => handleQuantityChange(item.name, user.userName, e.target.value)}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </CardContent>
-                </Card>
-            ))}
+            <Slider {...sliderSettings}>
+                {receipt.gptCopy.items.map((item) => (
+                    <Card key={item.name} sx={{ marginBottom: 2 }}>
+                        <CardContent>
+                            <Typography variant="h6">{item.name}</Typography>
+                            <Typography>Price: ${item.price.toFixed(2)} | Quantity: {item.quantity}</Typography>
+                            <Grid container spacing={2}>
+                                {(receipt.usersWithItems || []).map((user) => (
+                                    <Grid item xs={12} sm={6} md={4} key={user.userName}>
+                                        <Button
+                                            variant="outlined"
+                                            fullWidth
+                                            onClick={() => handleDrawerOpen(item.name, user.userName, splitItems[item.name]?.[user.userName] || 0)}
+                                        >
+                                            {user.userName}: {splitItems[item.name]?.[user.userName] || 0}
+                                        </Button>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                ))}
+            </Slider>
             <Button variant="contained" color="primary" onClick={handleSplitReceipt}>
                 Finalize Split
             </Button>
+            <QuantityDrawer
+                open={drawerOpen}
+                onClose={handleDrawerClose}
+                itemName={selectedItemName}
+                user={selectedUser}
+                quantity={quantity}
+                onQuantityChange={handleQuantityUpdate}
+            />
         </div>
     );
 };
