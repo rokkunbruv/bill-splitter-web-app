@@ -101,11 +101,11 @@ const SplitReceipt = () => {
     };
 
     return (
-        <div>
+        <div >
             <Typography variant="h4" gutterBottom>Split Receipt: {receipt.event}</Typography>
             <Slider {...sliderSettings}>
                 {receipt.gptCopy.items.map((item) => (
-                    <Card key={item.name} sx={{ marginBottom: 2 }}>
+                    <Card key={item.name} sx={{ marginBottom: 2, gap:2}}>
                         <CardContent>
                             <Typography variant="h6">{item.name}</Typography>
                             <Typography>Price: ${item.price.toFixed(2)} | Quantity: {item.quantity}</Typography>
@@ -114,6 +114,7 @@ const SplitReceipt = () => {
                                     <Grid item xs={12} sm={6} md={4} key={user.userName}>
                                         <Button
                                             variant="outlined"
+                                            color="secondary"
                                             fullWidth
                                             onClick={() => handleDrawerOpen(item.name, user.userName, splitItems[item.name]?.[user.userName] || 0)}
                                         >
@@ -126,7 +127,7 @@ const SplitReceipt = () => {
                     </Card>
                 ))}
             </Slider>
-            <Button variant="contained" color="primary" onClick={handleSplitReceipt}>
+            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#535C91'}} fullWidth>
                 Finalize Split
             </Button>
             <QuantityDrawer

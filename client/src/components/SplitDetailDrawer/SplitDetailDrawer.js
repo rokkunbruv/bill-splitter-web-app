@@ -37,33 +37,37 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
 
     return (
         <Drawer anchor='bottom' open={open} onClose={onClose}>
-            <Box sx={{ padding: 2 }}>
-                <MuiTypography variant="h6">{user}</MuiTypography>
-                <Box display="flex" alignItems="center" gap={1} mt={2}>
-                    <IconButton 
-                        aria-label="decrease" 
-                        onClick={handleDecrease}
-                        disabled={hasAdjusted}
+            <Box sx={{ padding:'2rem 1rem 2rem 2rem' , display: 'flex', flexDirection: 'column', gap: 2}}>
+                <MuiTypography variant="h6" fontWeight='550rem' display='flex' >{user}</MuiTypography>
+                <Box display="flex" flexDirection="row" gap={2}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <IconButton 
+                            aria-label="decrease" 
+                            onClick={handleDecrease}
+                            disabled={hasAdjusted}
+                        >
+                            <DecreaseQty />
+                        </IconButton>
+                        <MuiTypography variant="body1">{currentQuantity}</MuiTypography>
+                        <IconButton 
+                            aria-label="increase" 
+                            onClick={handleIncrease}
+                            disabled={hasAdjusted}
+                        >
+                            <IncreaseQty />
+                        </IconButton>
+                    </Box>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleDone}
+                        sx={{ backgroundColor:'#535C91' }}
+                        fullWidth
                     >
-                        <DecreaseQty />
-                    </IconButton>
-                    <MuiTypography variant="body1">{currentQuantity}</MuiTypography>
-                    <IconButton 
-                        aria-label="increase" 
-                        onClick={handleIncrease}
-                        disabled={hasAdjusted}
-                    >
-                        <IncreaseQty />
-                    </IconButton>
+                        Done
+                    </Button>
                 </Box>
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={handleDone}
-                    sx={{ marginTop: 2 }}
-                >
-                    Done
-                </Button>
+
             </Box>
         </Drawer>
     );

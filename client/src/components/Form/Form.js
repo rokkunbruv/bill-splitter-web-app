@@ -97,10 +97,8 @@ const Form = () => {
                 </FormControl>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
                     <Button 
-                        variant="outlined" 
-                        color="primary" 
                         onClick={() => setUseCamera(!useCamera)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{ marginBottom: 2, border: 0.5, borderColor: '#535C91', color: '#070F2B' }}
                     >
                         {useCamera ? 'Switch to File Upload' : 'Switch to Camera'}
                     </Button>
@@ -113,7 +111,7 @@ const Form = () => {
                                 width="100%"
                                 height="auto"
                             />
-                            <Button variant="contained" color="primary" onClick={capture} sx={{ marginTop: 2 }}>
+                            <Button variant="contained" color="primary" onClick={capture} sx={{ marginTop: 2,  backgroundColor: '#535C91'}}>
                                 Capture Photo
                             </Button>
                         </Box>
@@ -129,7 +127,7 @@ const Form = () => {
                     </Typography>
                 )}
                 <Button 
-                    sx={{ marginTop: 2, marginBottom: 2 }} 
+                    sx={{ marginTop: 2, marginBottom: 2, backgroundColor: '#535C91' }} 
                     variant="contained" 
                     color="primary" 
                     size="large" 
