@@ -6,8 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { createReceipt } from '../../actions/receipts';
 import { getMembers } from '../../actions/members';
 
-const Form = () => {
-    const [receiptData, setReceiptData] = useState({ event: '', uploadedFile: '', users: [] }); // Changed to 'users' for selected members
+const Form = ({ imageData }) => {  // Add imageData as a prop
+    const [receiptData, setReceiptData] = useState({ 
+        event: '', 
+        uploadedFile: imageData || '', 
+        users: [] 
+    });
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const members = useSelector((state) => state.members);
@@ -16,17 +20,21 @@ const Form = () => {
         dispatch(getMembers());
     }, [dispatch]);
 
+    useEffect(() => {
+        if (imageData) {
+            setReceiptData(prevData => ({ ...prevData, uploadedFile: imageData }));
+        }
+    }, [imageData]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Update receiptData with selected members and other info
-        const updatedReceiptData = { ...receiptData }; // Copy current state
-        dispatch(createReceipt(updatedReceiptData));
+        dispatch(createReceipt(receiptData));
         clear();
         navigate('/');
     };
 
     const clear = () => {
-        setReceiptData({ event: '', uploadedFile: '', users: [] }); // Clear state properly
+        setReceiptData({ event: '', uploadedFile: '', users: [] });
     };
 
     const handleMemberSelectChange = (e) => {
@@ -52,7 +60,7 @@ const Form = () => {
                         multiple
                         value={receiptData.users}
                         onChange={handleMemberSelectChange}
-                        renderValue={(selected) => selected.join(',')}
+                        renderValue={(selected) => selected.join(', ')}
                     >
                         {members.map((member) => (
                             <MenuItem key={member._id} value={member.name}>
@@ -61,7 +69,16 @@ const Form = () => {
                         ))}
                     </Select>
                 </FormControl>
-                <div><FileBase type="file" multiple={false} onDone={({ base64 }) => setReceiptData({ ...receiptData, uploadedFile: base64 })}/></div>
+                {!imageData && (
+                    <div>
+                        <FileBase type="file" multiple={false} onDone={({ base64 }) => setReceiptData({ ...receiptData, uploadedFile: base64 })}/>
+                    </div>
+                )}
+                {imageData && (
+                    <div>
+                        <img src={imageData} alt="Captured receipt" style={{ maxWidth: '100%', marginBottom: '20px' }} />
+                    </div>
+                )}
                 <Button sx={{ marginTop: 2, marginBottom: 2 }} variant="contained" color="primary" size="large" type="submit" fullWidth>
                     Upload
                 </Button>
