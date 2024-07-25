@@ -11,6 +11,8 @@ import Profile from './components/Profile/Profile';
 import Members from './components/Members/Members';
 import BottomNavigator from './components/BottomNavigator/BottomNavigator';
 
+import './index.css';
+
 const App = () => {
 
   return (

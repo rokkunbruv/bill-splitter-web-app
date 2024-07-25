@@ -29,7 +29,10 @@
 }
 
 .ProfileIcon{
-    padding: 0;
+    height: 5rem;
+    width: 5rem;
+    bottom: 20%;
+    margin: 0;
 }
 
 /* styles for naviation label on-click */

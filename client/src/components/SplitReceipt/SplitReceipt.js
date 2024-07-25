@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid, Box } from '@mui/material';
 import Slider from 'react-slick';  // Import react-slick
 import { getReceipts, updateReceiptSplit } from '../../actions/receipts';
 import 'slick-carousel/slick/slick.css';
@@ -10,6 +10,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { ReactComponent as RoundedArrowLeft } from '../icons/roundedArrowLeft.svg';
 import { ReactComponent as RoundedArrowRight } from '../icons/roundedArrowRight.svg';
 import QuantityDrawer from '../SplitDetailDrawer/SplitDetailDrawer';  
+import { alignProperty } from '@mui/material/styles/cssUtils';
 
 const SplitReceipt = () => {
     const { id } = useParams();
@@ -103,10 +104,10 @@ const SplitReceipt = () => {
     return (
         <div >
             <Typography variant="h4" gutterBottom>Split Receipt: {receipt.event}</Typography>
-            <Slider {...sliderSettings}>
+            <Slider {...sliderSettings} style={{m: 1, display: 'flex', flexDirection: 'row', padding: '0 0.5rem 0 0.5rem', '&:dots': {mt:'10rem'}}}>
                 {receipt.gptCopy.items.map((item) => (
-                    <Card key={item.name} sx={{ marginBottom: 2, gap:2}}>
-                        <CardContent>
+                    <Card key={item.name} sx={{ marginBottom: 2}}>
+                        <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
                             <Typography variant="h6">{item.name}</Typography>
                             <Typography>Price: ${item.price.toFixed(2)} | Quantity: {item.quantity}</Typography>
                             <Grid container spacing={2}>
@@ -127,7 +128,7 @@ const SplitReceipt = () => {
                     </Card>
                 ))}
             </Slider>
-            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#535C91'}} fullWidth>
+            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#C8C7E0', color: '#070F2B', '&:hover': {backgroundColor: '#535C91', color: 'white'}}} fullWidth>
                 Finalize Split
             </Button>
             <QuantityDrawer

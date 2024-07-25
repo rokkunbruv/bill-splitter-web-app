@@ -9,7 +9,6 @@ import {ReactComponent as ProfileDefault} from '../icons/profile1.svg';
 import {ReactComponent as GroupIconDefault} from '../icons/group.svg';
 import {ReactComponent as GroupIconSelected} from '../icons/groupSelected.svg';
 import { useNavigate } from 'react-router-dom';
-import '../styles.css';
 
 const Home = () => {
     const [value, setValue] = React.useState(0);

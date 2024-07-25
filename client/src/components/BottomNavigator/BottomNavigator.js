@@ -10,7 +10,7 @@ import {ReactComponent as ProfileDefault} from '../icons/profile1.svg';
 import {ReactComponent as GroupIconDefault} from '../icons/group.svg';
 import {ReactComponent as GroupIconSelected} from '../icons/groupSelected.svg';
 import { useNavigate } from 'react-router-dom';
-import '../styles.css';
+import '../BottomNavigator/styles.css';
 
 const BottomNavigator = () => {
     const [value, setValue] = React.useState(0);
@@ -45,7 +45,7 @@ const BottomNavigator = () => {
                 <BottomNavigationAction label="Home"  icon={value === 0 ? <HomeIconSelected /> : <HomeIconDefault />} className={value === 0 ? 'HomeIconSelected' : 'HomeIconDefault'} />
                 <BottomNavigationAction label="History" icon={value === 1 ? <HistoryIconSelected /> : <HistoryIconDefault />} className={value === 1 ? 'HistoryIconSelected' : 'HistoryIconDefault'} />
                 <BottomNavigationAction icon={<AddIconDefault />} className='AddIcon'/>
-                <BottomNavigationAction label="Members" icon={value === 3 ? <GroupIconSelected /> : <GroupIconDefault />} />
+                <BottomNavigationAction label="Friends" icon={value === 3 ? <GroupIconSelected /> : <GroupIconDefault />} />
                 <BottomNavigationAction label="Profile" icon={<ProfileDefault />} className='ProfileIcon'/>
             </BottomNavigation>
         </Paper>
