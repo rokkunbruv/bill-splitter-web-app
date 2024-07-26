@@ -10,6 +10,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { ReactComponent as RoundedArrowLeft } from '../icons/roundedArrowLeft.svg';
 import { ReactComponent as RoundedArrowRight } from '../icons/roundedArrowRight.svg';
 import QuantityDrawer from '../SplitDetailDrawer/SplitDetailDrawer';  
+import YippieDrawer from '../YippieDrawer/YippieDrawer';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 
 const SplitReceipt = () => {
@@ -18,7 +19,8 @@ const SplitReceipt = () => {
     const dispatch = useDispatch();
     const receipt = useSelector((state) => state.receipts.find((r) => r._id === id));
     const [splitItems, setSplitItems] = useState({});
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [SplitDrawerOpen, setSplitDrawerOpen] = useState(false);
+    const [yippieDrawerOpen, setYippieDrawerOpen] = useState(false);
     const [selectedItemName, setSelectedItemName] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
     const [quantity, setQuantity] = useState(0);
@@ -53,20 +55,20 @@ const SplitReceipt = () => {
         }));
     };
 
-    const handleDrawerOpen = (itemName, user, currentQuantity) => {
+    const handleSplitDrawerOpen = (itemName, user, currentQuantity) => {
         setSelectedItemName(itemName);
         setSelectedUser(user);
         setQuantity(currentQuantity);
-        setDrawerOpen(true);
+        setSplitDrawerOpen(true);
     };
 
-    const handleDrawerClose = () => {
-        setDrawerOpen(false);
+    const handleSplitDrawerClose = () => {
+        setSplitDrawerOpen(false);
     };
 
     const handleQuantityUpdate = (newQuantity) => {
         handleQuantityChange(selectedItemName, selectedUser, newQuantity);
-        handleDrawerClose();
+        handleSplitDrawerClose();
     };
 
     const handleSplitReceipt = () => {
@@ -87,6 +89,11 @@ const SplitReceipt = () => {
         });
 
         dispatch(updateReceiptSplit(receipt._id, usersSplit));
+        setYippieDrawerOpen(true);
+    };
+
+    const handleYippieDrawerClose = () => {
+        setYippieDrawerOpen(false);
         navigate(`/final-split/${id}`);
     };
 
@@ -102,11 +109,12 @@ const SplitReceipt = () => {
     };
 
     return (
-        <div >
+        <div style={{padding: '1.5rem'}}>
             <Typography variant="h4" gutterBottom>Split Receipt: {receipt.event}</Typography>
-            <Slider {...sliderSettings} style={{m: 1, display: 'flex', flexDirection: 'row', padding: '0 0.5rem 0 0.5rem', '&:dots': {mt:'10rem'}}}>
+            <Slider {...sliderSettings} style={{m: 1, display: 'flex', flexDirection: 'row', padding: '0 0.1rem 0 0.1rem'}}>
                 {receipt.gptCopy.items.map((item) => (
-                    <Card key={item.name} sx={{ marginBottom: 2}}>
+                    <div key={item.name} style={{padding: '0 1rem'}}>
+                        <Card sx={{ margin: 1}}>
                         <CardContent sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
                             <Typography variant="h6">{item.name}</Typography>
                             <Typography>Price: ${item.price.toFixed(2)} | Quantity: {item.quantity}</Typography>
@@ -117,7 +125,7 @@ const SplitReceipt = () => {
                                             variant="outlined"
                                             color="secondary"
                                             fullWidth
-                                            onClick={() => handleDrawerOpen(item.name, user.userName, splitItems[item.name]?.[user.userName] || 0)}
+                                            onClick={() => handleSplitDrawerOpen(item.name, user.userName, splitItems[item.name]?.[user.userName] || 0)}
                                         >
                                             {user.userName}: {splitItems[item.name]?.[user.userName] || 0}
                                         </Button>
@@ -125,19 +133,24 @@ const SplitReceipt = () => {
                                 ))}
                             </Grid>
                         </CardContent>
-                    </Card>
+                        </Card>
+                    </div>
                 ))}
             </Slider>
-            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#C8C7E0', color: '#070F2B', '&:hover': {backgroundColor: '#535C91', color: 'white'}}} fullWidth>
-                Finalize Split
+            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#535C91', opacity: 0.85 ,'&:hover': {backgroundColor: '#535C91', opacity: 1, fontFamily: 'Urbanist'}}} fullWidth>
+                Finish Split
             </Button>
             <QuantityDrawer
-                open={drawerOpen}
-                onClose={handleDrawerClose}
+                open={SplitDrawerOpen}
+                onClose={handleSplitDrawerClose}
                 itemName={selectedItemName}
                 user={selectedUser}
                 quantity={quantity}
                 onQuantityChange={handleQuantityUpdate}
+            />
+            <YippieDrawer
+                open={yippieDrawerOpen}
+                onClose={handleYippieDrawerClose}
             />
         </div>
     );

@@ -11,22 +11,22 @@ const Profile = () => {
         <ProfileIcon style={{width: '8rem', height: '8rem', margin: '3rem 0 0 0'}} />   
           <Box sx={{display:'flex', flexDirection: 'row', alignItems: 'center'}}>
             <Typography variant='h5' fontWeight='bold' margin="1rem">UserName</Typography>
-            <EditIcon/>
+            <EditIcon />
           </Box>
-          <Box sx={{margin: '2rem'}}>
-            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: '2rem' }}>
-              <Typography fontWeight="bold" sx={{opacity: 0.5}}>Email</Typography>
-              <Typography fontWeight="bold">username@gmail.com</Typography>
+          <Box sx={{width: '90%', height: '90%', display:'flex', flexDirection: 'column', margin: '1rem', gap: '0.2rem'}}>
+            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: 'auto' }}>
+              <Typography variant='h7' fontWeight="bold" sx={{opacity: 0.5}}>Email</Typography>
+              <Typography variant='h7' fontWeight="bold">username@gmail.com</Typography>
             </Box>
 
-            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: '1rem' }}>
-              <Typography fontWeight="bold" sx={{opacity: 0.5}}>Phone Number</Typography>
-              <Typography fontWeight="bold" >(+63) XXX XXX XXXX</Typography>
+            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: 'auto' }}>
+              <Typography variant='h7' fontWeight="bold" sx={{opacity: 0.5}}>Phone Number</Typography>
+              <Typography variant='h7' fontWeight="bold" >(+63) XXX XXX XXXX</Typography>
             </Box>
 
-            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: '2rem' }}>
-              <Typography fontWeight="bold" sx={{opacity: 0.5}}>Country</Typography>
-              <Typography fontWeight="bold">Country</Typography>
+            <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: 'auto' }} >
+              <Typography variant='h7' fontWeight="bold" sx={{opacity: 0.5}}>Country</Typography>
+              <Typography variant='h7' fontWeight="bold">Country</Typography>
             </Box>
           </Box>
       </Box>      
