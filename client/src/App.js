@@ -10,6 +10,7 @@ import Home from './components/Home/Home';
 import Profile from './components/Profile/Profile';
 import Members from './components/Members/Members';
 import BottomNavigator from './components/BottomNavigator/BottomNavigator';
+import TakePhoto from './components/TakePhoto/TakePhoto';
 
 import './index.css';
 
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/members" element={<Members />} />
             <Route path="/receipts" element={<ReceiptList />} />
+            <Route path="/take-photo" element={<TakePhoto />} />
           </Routes>
         </Box>
         <BottomNavigator />
