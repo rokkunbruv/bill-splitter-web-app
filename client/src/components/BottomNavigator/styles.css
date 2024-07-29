@@ -1,0 +1,45 @@
+.HomeIconSelected{
+    height: 2.3rem;
+    width: 2.3rem;
+    top: 17%;
+}
+
+.HomeIconDefault{
+    height: 3.2rem;
+    width: 3.2rem;
+    top: 5%;
+}
+
+.HistoryIconSelected{
+    height: 2.6rem;
+    width: 2.6rem;
+    top: 15%;
+}
+
+.HistoryIconDefault{
+    height: 3.4rem;
+    width: 3.4rem;
+    top: 4%;
+}
+
+.AddIcon{
+    height: 5rem;
+    width: 5rem;
+    bottom: 40%;
+}
+
+.ProfileIcon{
+    height: 5rem;
+    width: 5rem;
+    bottom: 20%;
+    margin: 0;
+}
+
+/* styles for naviation label on-click */
+.bottom-nav-action .MuiBottomNavigationAction-label {
+    color: grey; /* Default color */
+}
+  
+.bottom-nav-action .Mui-selected .MuiBottomNavigationAction-label {
+    color: #070F2B; /* Selected color */
+}
