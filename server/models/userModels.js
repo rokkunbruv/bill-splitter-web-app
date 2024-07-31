@@ -23,7 +23,7 @@ const userSchema = new Schema({
     },
     resetCodeExpiresAt: {
         type: Date,
-        required: true
+        default: null,
     }
 });
 

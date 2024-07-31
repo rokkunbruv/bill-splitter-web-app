@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { signup, login, verifyOTP, sendOTPVerificationEmail, forgotPassword, resetPassword } from '../controllers/userControllers.js';
+import { signup, login, verifyOTP, sendOTPVerificationEmail, forgotPassword, verifyResetPassword, resetPassword } from '../controllers/userControllers.js';
 
 const router = express.Router();
 
@@ -15,6 +15,8 @@ router.post('/sendOTP', sendOTPVerificationEmail);
 
 // can be used to resend change password email
 router.post('/forgot-password', forgotPassword);
+
+router.post('/verify-reset-password', verifyResetPassword);
 
 router.post('/reset-password', resetPassword);
 

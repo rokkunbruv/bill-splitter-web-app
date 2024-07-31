@@ -247,11 +247,9 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// requests: resetCode, password, confirmPassword
-// responds: message
-const resetPassword = async (req, res) => {
+const verifyResetPassword = async (req, res) => {
   try {
-    const { resetCode, password, confirmPassword } = req.body;
+    const { resetCode } = req.body;
 
     if (!resetCode) {
       return res.status(400).json({ message: 'Invalid reset code'});
@@ -271,6 +269,28 @@ const resetPassword = async (req, res) => {
 
     if (resetCode !== user.resetCode) {
       return res.status(400).json({ message: 'Invalid reset code' });
+    }
+
+    user.resetCode = ''; // Clear the reset code
+
+    res.status(200).json({ message: 'Password reset has been verified.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// requests: resetCode, password, confirmPassword
+// responds: message
+const resetPassword = async (req, res) => {
+  try {
+    const { password, confirmPassword } = req.body;
+
+    const email = forgotPasswordEmail;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
     }
 
     if(!password || !confirmPassword) {
@@ -295,7 +315,6 @@ const resetPassword = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
-    user.resetCode = ''; // Clear the reset code
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
@@ -305,4 +324,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-export { login, signup, verifyOTP, sendOTPVerificationEmail, resetPassword, forgotPassword };
+export { login, signup, verifyOTP, sendOTPVerificationEmail, verifyResetPassword, resetPassword, forgotPassword };
