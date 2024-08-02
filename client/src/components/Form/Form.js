@@ -10,7 +10,6 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
     const [receiptData, setReceiptData] = useState({ 
         event: '', 
         uploadedFile: imageData || '', 
-        users: [] 
     });
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -44,31 +43,15 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
     return (
         <Paper sx={{ padding: 2 }}>
             <form autoComplete='off' noValidate onSubmit={handleSubmit}>
-                <Typography variant="h6">Enter Receipt Info</Typography>
-                <TextField 
-                    sx={{ marginTop: 2, marginBottom: 2 }} 
-                    name="event" 
-                    variant='outlined' 
-                    label="Event" 
-                    fullWidth 
-                    value={receiptData.event} 
+                <TextField
+                    sx={{ marginTop: 2, marginBottom: 2 }}
+                    name="event"
+                    variant='outlined'
+                    label="Event"
+                    fullWidth
+                    value={receiptData.event}
                     onChange={(e) => setReceiptData({ ...receiptData, event: e.target.value })}
                 />
-                <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <InputLabel>Select Members</InputLabel>
-                    <Select
-                        multiple
-                        value={receiptData.users}
-                        onChange={handleMemberSelectChange}
-                        renderValue={(selected) => selected.join(', ')}
-                    >
-                        {members.map((member) => (
-                            <MenuItem key={member._id} value={member.name}>
-                                {member.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
                 {!imageData && (
                     <div>
                         <FileBase type="file" multiple={false} onDone={({ base64 }) => setReceiptData({ ...receiptData, uploadedFile: base64 })}/>

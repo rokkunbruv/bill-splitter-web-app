@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid, Box, TextField } from '@mui/material';
 import { getReceipts } from '../../actions/receipts';
 
 import YippieDrawer from '../YippieDrawer/YippieDrawer';
@@ -58,6 +58,15 @@ const FinalSplit = () => {
                                             </Typography>
                                         );
                                     })}
+                                    <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1.4rem'}}>
+                                        <Typography>Share</Typography>
+                                        <TextField id="outlined-number"
+                                                    type="number"
+                                                    placeholder="Enter Amount"
+                                                    size="small"
+                                                    color="secondary"
+                                        />
+                                    </Box>
                                 </CardContent>
                             </Card>
                         </Grid>

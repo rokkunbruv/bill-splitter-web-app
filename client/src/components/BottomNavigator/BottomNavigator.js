@@ -19,6 +19,7 @@ const BottomNavigator = () => {
 
     const handleNavigation = (newValue) => {
         setValue(newValue);
+        setShowNewButtons(false);
         switch (newValue) {
             case 0:
                 navigate('/');

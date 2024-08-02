@@ -39,22 +39,7 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
         <Drawer anchor='bottom' open={open} onClose={onClose}>
             <Box sx={{ padding:'2rem 2rem 2rem 1.5rem' , display: 'flex', flexDirection: 'column', gap: 5}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '5rem'}}>
-                    <Typography variant="h6" fontWeight='550' padding={1.3}>{user}</Typography>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: '0.4rem'}}>
-                        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '1.2rem'}}>
-                            <Typography>To pay</Typography>
-                            <Typography fontWeight='bold'>0.00</Typography>
-                        </Box>
-                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1.4rem'}}>
-                            <Typography>Share</Typography>
-                            <TextField id="outlined-number"
-                                        type="number"
-                                        placeholder="Enter Amount"
-                                        size="small"
-                                        color="secondary"
-                            />
-                        </Box>
-                    </Box>
+                    <Typography variant="h7" fontWeight='bold' padding={1.3} fontSize= '30px'>{user}</Typography>
                 </Box>
                 <Box display="flex" flexDirection="row" gap={0} alignItems="center" justifyContent="space-between">
                     <Box display="flex" alignItems="center" gap={1}>

@@ -65,14 +65,14 @@ const YippieDrawer = ({ open, onClose }) => {
                     </Box>
                 </Box>
                 <footer style={{display: 'flex', flexDirection: 'column', margin: '-14rem', gap: '1rem'}}>
-                    <Button 
+                    {/* <Button 
                         variant='contained' 
                         color='secondary' 
                         sx={{backgroundColor: '#535C91', '&:hover': {backgroundColor: '#535C91', fontFamily: 'Urbanist, sans-serif'}}}
-                        onClick = {viewDetails}
+                        onClick = {onClose}
                     >
                         View Details
-                    </Button>
+                    </Button> */}
                     <IconButton
                         aria-label="close" 
                         onClick={backToReceipts}
