@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
 import { getReceipts } from '../../actions/receipts';
 
+import YippieDrawer from '../YippieDrawer/YippieDrawer';
+
 const FinalSplit = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
+    const [yippieDrawerOpen, setYippieDrawerOpen] = useState(false);
     const receipt = useSelector((state) => state.receipts.find((r) => r._id === id));
 
     useEffect(() => {
@@ -19,6 +22,14 @@ const FinalSplit = () => {
 
     // Check if usersWithItems exists and is an array
     const usersWithItems = Array.isArray(receipt.usersWithItems) ? receipt.usersWithItems : [];
+
+    const handleYippieDrawerOpen = () => {
+        setYippieDrawerOpen(true);
+    };
+
+    const handleYippieDrawerClose = () => {
+        setYippieDrawerOpen(false);
+    };
 
     return (
         <div>
@@ -53,9 +64,13 @@ const FinalSplit = () => {
                     );
                 })}
             </Grid>
-            <Button component={Link} to="/receipts" variant="contained" color="primary" sx={{ marginTop: 2 }}>
-                Back to Receipts
+            <Button onClick={handleYippieDrawerOpen} variant="contained" color="primary" sx={{ marginTop: 2 }}>
+                Finish
             </Button>
+            <YippieDrawer
+                open={yippieDrawerOpen}
+                onClose={handleYippieDrawerClose}
+            />
         </div>
     );
 };

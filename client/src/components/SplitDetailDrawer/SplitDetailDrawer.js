@@ -56,14 +56,14 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
                         </Box>
                     </Box>
                 </Box>
-                <Box display="flex" flexDirection="row" gap={1} alignItems="center" justifyContent="center">
-                    <Box display="flex" alignItems="center" gap={2}>
+                <Box display="flex" flexDirection="row" gap={0} alignItems="center" justifyContent="space-between">
+                    <Box display="flex" alignItems="center" gap={1}>
                         <IconButton 
                             aria-label="decrease" 
                             onClick={handleDecrease}
                             disabled={hasAdjusted}
                         >
-                            <DecreaseQty width="40" height="40"/>
+                            <DecreaseQty width="30" height="30"/>
                         </IconButton>
                         <Typography variant="h4">{currentQuantity}</Typography>
                         <IconButton 
@@ -71,14 +71,14 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
                             onClick={handleIncrease}
                             disabled={hasAdjusted}
                         >
-                            <IncreaseQty width="40" height="40"/>
+                            <IncreaseQty width="30" height="30"/>
                         </IconButton>
                     </Box>
                     <Button 
                         variant="contained" 
                         color="primary" 
                         onClick={handleDone}
-                        sx={{ backgroundColor:'#535C91', margin: '0 0 0 5rem', '&:hover':{backgroundColor: '#535C91'} }}
+                        sx={{ backgroundColor:'#535C91', margin: '0 0 0 2rem', '&:hover':{backgroundColor: '#535C91'} }}
                         fullWidth
                     >
                         Done

@@ -7,9 +7,13 @@ import { ReactComponent as CloseIcon } from '../icons/closeIcon.svg';
 
 const YippieDrawer = ({ open, onClose }) => {
     const navigate = useNavigate();
-    const backToHome = () => {
+    const backToReceipts = () => {
         navigate(`/receipts`);
-    }
+    };
+
+    const viewDetails = () => {
+        navigate(`/view-details`)
+    };
 
     return (
         <Drawer anchor='bottom' open={open} onClose={onClose} 
@@ -35,7 +39,7 @@ const YippieDrawer = ({ open, onClose }) => {
                         flexDirection: 'row',
                         alignItems: 'flex-start',
                         position: 'relative',
-                        margin: '-10rem 0 22.5rem 0',
+                        margin: '-15rem 0 26.5rem 0',
                         zIndex: 1,
                     }}
                 >
@@ -65,13 +69,13 @@ const YippieDrawer = ({ open, onClose }) => {
                         variant='contained' 
                         color='secondary' 
                         sx={{backgroundColor: '#535C91', '&:hover': {backgroundColor: '#535C91', fontFamily: 'Urbanist, sans-serif'}}}
-                        onClick={onClose} 
+                        onClick = {viewDetails}
                     >
                         View Details
                     </Button>
                     <IconButton
                         aria-label="close" 
-                        onClick={backToHome}
+                        onClick={backToReceipts}
                     >
                         <CloseIcon/>
                     </IconButton>

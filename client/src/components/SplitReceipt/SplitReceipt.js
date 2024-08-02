@@ -10,8 +10,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import { ReactComponent as RoundedArrowLeft } from '../icons/roundedArrowLeft.svg';
 import { ReactComponent as RoundedArrowRight } from '../icons/roundedArrowRight.svg';
 import QuantityDrawer from '../SplitDetailDrawer/SplitDetailDrawer';  
-import YippieDrawer from '../YippieDrawer/YippieDrawer';
-import { alignProperty } from '@mui/material/styles/cssUtils';
 
 const SplitReceipt = () => {
     const { id } = useParams();
@@ -20,7 +18,6 @@ const SplitReceipt = () => {
     const receipt = useSelector((state) => state.receipts.find((r) => r._id === id));
     const [splitItems, setSplitItems] = useState({});
     const [SplitDrawerOpen, setSplitDrawerOpen] = useState(false);
-    const [yippieDrawerOpen, setYippieDrawerOpen] = useState(false);
     const [selectedItemName, setSelectedItemName] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
     const [quantity, setQuantity] = useState(0);
@@ -89,11 +86,6 @@ const SplitReceipt = () => {
         });
 
         dispatch(updateReceiptSplit(receipt._id, usersSplit));
-        setYippieDrawerOpen(true);
-    };
-
-    const handleYippieDrawerClose = () => {
-        setYippieDrawerOpen(false);
         navigate(`/final-split/${id}`);
     };
 
@@ -138,7 +130,7 @@ const SplitReceipt = () => {
                 ))}
             </Slider>
             <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{mt:6, backgroundColor:'#535C91', opacity: 0.85 ,'&:hover': {backgroundColor: '#535C91', opacity: 1, fontFamily: 'Urbanist'}}} fullWidth>
-                Finish Split
+                Continue
             </Button>
             <QuantityDrawer
                 open={SplitDrawerOpen}
@@ -147,10 +139,6 @@ const SplitReceipt = () => {
                 user={selectedUser}
                 quantity={quantity}
                 onQuantityChange={handleQuantityUpdate}
-            />
-            <YippieDrawer
-                open={yippieDrawerOpen}
-                onClose={handleYippieDrawerClose}
             />
         </div>
     );

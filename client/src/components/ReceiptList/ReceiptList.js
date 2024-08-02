@@ -16,11 +16,11 @@ const ReceiptList = () => {
 
     return (
         <div>
-            <Typography>Split History</Typography>
+            {/* <Typography>Split History</Typography> */}
             {!receipts.length ? <CircularProgress /> : (
-                <Grid container alignItems="stretch" spacing={5}>
+                <Grid container spacing={1}>
                     {receipts.map((receipt) => (
-                        <Grid key={receipt._id} item xs={12} sm={6} md={4}>
+                        <Grid key={receipt._id} item xs={12}>
                             <Receipt receipt={receipt} />
                         </Grid>
                     ))}
