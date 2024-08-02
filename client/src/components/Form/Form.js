@@ -13,8 +13,7 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
     });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const members = useSelector((state) => state.members);
-
+    
     useEffect(() => {
         dispatch(getMembers());
     }, [dispatch]);
@@ -29,15 +28,11 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
         e.preventDefault();
         dispatch(createReceipt(receiptData));
         clear();
-        navigate('/');
+        navigate(`/`);
     };
 
     const clear = () => {
         setReceiptData({ event: '', uploadedFile: '', users: [] });
-    };
-
-    const handleMemberSelectChange = (e) => {
-        setReceiptData({ ...receiptData, users: e.target.value });
     };
 
     return (

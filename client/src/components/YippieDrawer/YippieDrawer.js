@@ -5,16 +5,12 @@ import { ReactComponent as Confetti } from '../icons/confetti.svg';
 import { ReactComponent as CompleteBadge } from '../icons/billCompleteBadge.svg';
 import { ReactComponent as CloseIcon } from '../icons/closeIcon.svg';
 
-const YippieDrawer = ({ open, onClose }) => {
+const YippieDrawer = ({ open, onClose, onViewDetailsOpen }) => {
     const navigate = useNavigate();
     const backToReceipts = () => {
         navigate(`/receipts`);
     };
-
-    const viewDetails = () => {
-        navigate(`/view-details`)
-    };
-
+    
     return (
         <Drawer anchor='bottom' open={open} onClose={onClose} 
             sx={{
@@ -65,14 +61,14 @@ const YippieDrawer = ({ open, onClose }) => {
                     </Box>
                 </Box>
                 <footer style={{display: 'flex', flexDirection: 'column', margin: '-14rem', gap: '1rem'}}>
-                    {/* <Button 
+                    <Button 
                         variant='contained' 
                         color='secondary' 
                         sx={{backgroundColor: '#535C91', '&:hover': {backgroundColor: '#535C91', fontFamily: 'Urbanist, sans-serif'}}}
-                        onClick = {onClose}
+                        onClick = {onViewDetailsOpen}
                     >
                         View Details
-                    </Button> */}
+                    </Button>
                     <IconButton
                         aria-label="close" 
                         onClick={backToReceipts}

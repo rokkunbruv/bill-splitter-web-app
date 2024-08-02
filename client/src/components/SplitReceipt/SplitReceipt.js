@@ -21,6 +21,8 @@ const SplitReceipt = () => {
 
     const [splitItems, setSplitItems] = useState({});
     const [splitDrawerOpen, setSplitDrawerOpen] = useState(false);
+    const [isContinueEnabled, setIsContinueEnabled] = useState(false);
+
     const [selectedItemName, setSelectedItemName] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
     const [quantity, setQuantity] = useState(0);
@@ -46,6 +48,38 @@ const SplitReceipt = () => {
         }
     }, [dispatch, receipt]);
 
+    useEffect(() => {
+        setIsContinueEnabled(checkIfAllFieldsFilled());
+    }, [selectedMembers, splitItems]);    
+
+    const checkIfAllFieldsFilled = () => {
+        if (selectedMembers.length === 0) {
+            return false;
+        }
+    
+        // Iterate over each item in the receipt
+        for (const item of receipt.gptCopy.items) {
+            const itemName = item.name;
+            const itemQuantity = item.quantity;
+            
+            // Calculate total assigned quantity for this item
+            let totalAssignedQuantity = 0;
+    
+            // Sum up the quantities assigned to each member
+            for (const member of selectedMembers) {
+                totalAssignedQuantity += splitItems[itemName]?.[member] || 0;
+            }
+    
+            // Check if total assigned quantity matches the item's quantity
+            if (totalAssignedQuantity !== itemQuantity) {
+                return false;
+            }
+        }
+    
+        // If all items have matching quantities, return true
+        return true;
+    };
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(createReceipt(receiptData));
@@ -175,7 +209,7 @@ const SplitReceipt = () => {
                 ))}
             </Slider>
 
-            <Button variant="contained" color="primary" onClick={handleSplitReceipt} sx={{ mt: 6, backgroundColor: '#535C91', opacity: 0.85, '&:hover': { backgroundColor: '#535C91', opacity: 1, fontFamily: 'Urbanist' } }} fullWidth>
+            <Button variant="contained" color="primary" disabled={!isContinueEnabled} onClick={handleSplitReceipt} sx={{ textTransform: 'capitalize', mt: 6, backgroundColor: '#535C91', opacity: 0.85, '&:hover': { backgroundColor: '#535C91', opacity: 1, fontFamily: 'Urbanist' } }} fullWidth>
                 Continue
             </Button>
             <QuantityDrawer
