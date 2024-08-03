@@ -2,11 +2,41 @@ import React, { useState } from 'react';
 import { Box, Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import SignInBG from '../../Backgrounds/SignInBG.svg'; 
 import { ReactComponent as BackIcon } from '../../icons/BackIconLight.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ReactComponent as Visibility } from '../../icons/PasswordVisible.svg';
 import { ReactComponent as VisibilityOff } from '../../icons/PasswordInvisible.svg';
+import { useDispatch } from 'react-redux';
+import { resetPassword } from '../../../actions/auth';
 
 const ResetPasswordPage = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // password state
+    const [password, setPassword] = useState('');
+    const handlePassword = (event) => {
+        setPassword(event.target.value);
+    }
+
+    // confirm password state
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const handleConfirmPassword = (event) => {
+        setConfirmPassword(event.target.value);
+    }
+
+    // submit new password
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const response = dispatch(resetPassword(password, confirmPassword));
+
+        if (response.payload) {
+            navigate('/password-success');
+        } else {
+            console.log(response.error);
+        }
+
+    }
+    
     const [showPassword, setShowPassword] = useState({ new: false, confirm: false });
 
     const handleClickShowPassword = (field) => {
@@ -119,6 +149,8 @@ const ResetPasswordPage = () => {
                             </InputAdornment>
                         ),
                     }}
+                    value={password}
+                    onChange={handlePassword}
                     variant="standard" 
                     fullWidth
                     margin="normal"
@@ -142,6 +174,8 @@ const ResetPasswordPage = () => {
                             </InputAdornment>
                         ),
                     }}
+                    value={confirmPassword}
+                    onChange={handleConfirmPassword}
                     variant="standard" 
                     fullWidth
                     margin="normal"
@@ -155,20 +189,26 @@ const ResetPasswordPage = () => {
                     alignItems: 'center',                
                     height: '5vh'
                 }}>
-                    <Button component={Link} to={`/password-success`} variant="contained" color="secondary" style={{
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
-                        borderRadius: '15px',
-                        width: '120px',
-                        color: '#070F2B', 
-                        backgroundColor:'#BCC0D6', 
-                        marginTop: '40px',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        backgroundColor: '#535C91',
-                        color: '#FDF8F8',
-                        '&:hover': {backgroundColor: '#BCC0D6'},
-                        width: '200px'
+                    <Button 
+                        component={Link} 
+                        to={`/password-success`} 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={handleSubmit}
+                        style={{
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
+                            borderRadius: '15px',
+                            width: '120px',
+                            color: '#070F2B', 
+                            backgroundColor:'#BCC0D6', 
+                            marginTop: '40px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                            backgroundColor: '#535C91',
+                            color: '#FDF8F8',
+                            '&:hover': {backgroundColor: '#BCC0D6'},
+                            width: '200px'
                         }}>
                         Reset Password
                     </Button>

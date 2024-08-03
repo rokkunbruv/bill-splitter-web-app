@@ -6,11 +6,40 @@ import { ReactComponent as PasswordIcon } from '../../icons/PasswordIcon.svg';
 import { ReactComponent as Visibility } from '../../icons/PasswordVisible.svg';
 import { ReactComponent as VisibilityOff } from '../../icons/PasswordInvisible.svg';
 import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; 
+import { login } from '../../../actions/auth';
 
 const SignInPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [showPassword, setShowPassword] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+
+    // email state
+    const [email, setEmail] = useState('');
+    const handleEmail = (event) => {
+        setEmail(event.target.value);
+    }
+
+    // password state
+    const [password, setPassword] = useState('');
+    const handlePassword = (event) => {
+        setPassword(event.target.value);
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const response = dispatch(login(email, password));
+        console.log(response);
+
+        if (response.payload) {
+            navigate('/welcome');
+        } else {
+            console.log(response.error);
+        }
+    }
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -136,7 +165,9 @@ const SignInPage = () => {
                                         <EmailIcon/>
                                     </InputAdornment>
                                 ),
-                            }} 
+                            }}
+                            value={email}
+                            onChange={handleEmail}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -165,6 +196,8 @@ const SignInPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
+                            value={password}
+                            onChange={handlePassword}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -190,7 +223,13 @@ const SignInPage = () => {
                     <Box sx={{
                         marginTop:'10px'
                     }}>
-                        <Button component={Link} to={`/welcome`} variant="contained" color="secondary" style={{
+                        <Button 
+                            component={Link} 
+                            to={`/welcome`} 
+                            variant="contained" 
+                            color="secondary" 
+                            onClick={handleSubmit}
+                            style={{
                             boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
                             borderRadius: '15px',
                             width: '120px',

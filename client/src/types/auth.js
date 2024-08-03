@@ -1,0 +1,20 @@
+
+// login action types
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+
+// send change password email action types
+export const SEND_CHANGE_PASS_EMAIL_REQUEST = 'SEND_CHANGE_PASS_EMAIL_REQUEST';
+export const SEND_CHANGE_PASS_EMAIL_SUCCESS = 'SEND_CHANGE_PASS_EMAIL_SUCCESS';
+export const SEND_CHANGE_PASS_EMAIL_FAILURE = 'SEND_CHANGE_PASS_EMAIL_FAILURE';
+
+// verify change password action types
+export const VERIFY_CHANGE_PASS_REQUEST = 'VERIFY_CHANGE_PASS_REQUEST';
+export const VERIFY_CHANGE_PASS_SUCCESS = 'VERIFY_CHANGE_PASS_SUCCESS';
+export const VERIFY_CHANGE_PASS_FAILURE = 'VERIFY_CHANGE_PASS_FAILURE';
+
+// reset password action types
+export const RESET_PASS_REQUEST = 'RESET_PASS_REQUEST';
+export const RESET_PASS_SUCCESS = 'RESET_PASS_SUCCESS';
+export const RESET_PASS_FAILURE = 'RESET_PASS_FAILURE';

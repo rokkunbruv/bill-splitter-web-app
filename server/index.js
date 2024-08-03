@@ -1,33 +1,36 @@
-// /server/index.js
+
 import express from 'express';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
-import receiptRoutes from './routes/receipts.js';
-import memberRoutes from './routes/members.js';
-
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+import mongoose from 'mongoose';
+import router from './routes/userRoutes.js';
 
 const app = express();
+dotenv.config();
 
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(bodyParser.json({limit: "30mb", extended: true}));
+app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
+app.use(express.json());
 
-app.use('/receipts', receiptRoutes);
-app.use('/members', memberRoutes);
+app.get('/', (req, res) => {
+    console.log(req);
+    return res.status(234).send('Welcome to Bill Splitter App');
+})
 
-const CONNECTION_URL = process.env.CONNECTION_URL;
+app.use('/api/auth', router);
+
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(CONNECTION_URL)
-    .then(() => app.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
-    .catch((error)=> console.log(error.message));
+mongoose
+    .connect(process.env.MONGODB_URL)
+    .then(() => {
+        console.log('App connected to database');
+        app.listen(PORT, () => {
+            console.log(`App is listening to port: ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.log(error);
+    });

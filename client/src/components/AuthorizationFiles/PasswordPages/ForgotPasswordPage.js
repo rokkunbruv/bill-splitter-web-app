@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import SignInBG from '../../Backgrounds/SignInBG.svg'; 
 import { ReactComponent as EmailIcon } from '../../icons/EmailIcon.svg';
 import { ReactComponent as BackIcon } from '../../icons/BackIconLight.svg'
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { sendChangePasswordEmail } from '../../../actions/auth';
 
 const ForgotPasswordPage = () => {
-    
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // email state
+    const [email, setEmail] = useState('');
+    const handleEmail = (event) => {
+        setEmail(event.target.value);
+    }
+
+    // send change password confirmation email
+    const handleSendEmail = (event) => {
+        event.preventDefault();
+        const response = dispatch(sendChangePasswordEmail(email));
+
+        if (response.payload) {
+            navigate('/verify-password-code');
+        } else {
+            console.log(response.error);
+        }
+    }
+
     return (
         <div 
             style={{ 
@@ -101,6 +123,8 @@ const ForgotPasswordPage = () => {
                               </InputAdornment>
                             ),
                         }} 
+                        value={email}
+                        onChange={handleEmail}
                         variant="standard" 
                         fullWidth
                         margin="normal"
@@ -114,17 +138,22 @@ const ForgotPasswordPage = () => {
                     alignItems: 'center',                
                     height: '5vh'
                 }}>
-                    <Button component={Link} to={`/verify-password-code`} variant="contained" color="secondary" style={{
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
-                        borderRadius: '15px',
-                        width: '120px',
-                        color: '#070F2B', 
-                        backgroundColor:'#BCC0D6', 
-                        marginTop: '40px',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        '&:hover': {backgroundColor: '#BCC0D6'}
+                    <Button 
+                        component={Link} 
+                        to={`/verify-password-code`} 
+                        variant="contained" color="secondary" 
+                        onClick={handleSendEmail}
+                        style={{
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
+                            borderRadius: '15px',
+                            width: '120px',
+                            color: '#070F2B', 
+                            backgroundColor:'#BCC0D6', 
+                            marginTop: '40px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                            '&:hover': {backgroundColor: '#BCC0D6'}
                         }}>
                         Send code
                     </Button>

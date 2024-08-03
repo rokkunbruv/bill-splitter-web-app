@@ -2,11 +2,19 @@ import React from 'react';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import VerifyEmailBG from '../../Backgrounds/VerifyEmailBG.svg'; 
 import { ReactComponent as BackIcon } from '../../icons/BackIconLight.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NumberPad from '../VerifyEmailPage/Numpad.jsx';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { sendChangePasswordEmail, verifyChangePassword } from '../../../actions/auth';
 
 const VerifyPasswordCode = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // retrieve saved email
+  const email = useSelector(state => state.authReducer.sendChangePassEmail.email);
+  
   const [code, setCode] = useState(['', '', '', '', '', '']);
   
   const handlePadClick = (value) => {
@@ -29,14 +37,33 @@ const VerifyPasswordCode = () => {
     }
   };
 
+  // submit inputted code to be verified
   const handleSubmit = () => {
     const codeString = code.join('');
     console.log('Submitted code:', codeString);
+
+    const response = dispatch(verifyChangePassword(codeString));
+
+    if (response.payload) {
+      navigate('/reset-password');
+    } else {
+      console.log(response.error);
+    }
   };
 
+  // resend email verification
   const handleResend = () => {
-      console.log('Resend code');
-      // Add your resend logic here
+      if (!email) {
+        console.log('Email not dispatched');
+      }
+
+      const response = dispatch(sendChangePasswordEmail(email));
+
+      if (response.payload) {
+        console.log('Email verification has been resent');
+      } else {
+        console.log(response.error);
+      }
     };
 
   return (
