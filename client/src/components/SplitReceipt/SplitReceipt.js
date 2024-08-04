@@ -29,6 +29,8 @@ const SplitReceipt = () => {
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [receiptData, setReceiptData] = useState({ event: '', users: [] });
 
+    const [currentItem, setCurrentItem] = useState(null);
+
     useEffect(() => {
         dispatch(getMembers());
     }, [dispatch]);
@@ -97,9 +99,31 @@ const SplitReceipt = () => {
         setReceiptData({ ...receiptData, users: value });
     };
 
+    // const handleQuantityChange = (itemName, user, value) => {
+    //     const maxQuantity = receipt.gptCopy.items.find(item => item.name === itemName).quantity;
+    //     const adjustedQuantity = Math.min(Math.max(0, value), maxQuantity);
+    //     setSplitItems(prev => ({
+    //         ...prev,
+    //         [itemName]: {
+    //             ...prev[itemName],
+    //             [user]: adjustedQuantity
+    //         }
+    //     }));
+    // };
+
     const handleQuantityChange = (itemName, user, value) => {
-        const maxQuantity = receipt.gptCopy.items.find(item => item.name === itemName).quantity;
-        const adjustedQuantity = Math.min(Math.max(0, value), maxQuantity);
+        const item = receipt.gptCopy.items.find(item => item.name === itemName);
+        const maxQuantity = item.quantity;
+        
+        // Calculate the total quantity assigned to all users for this item
+        const totalAssignedQuantity = Object.values(splitItems[itemName] || {}).reduce((sum, qty) => sum + qty, 0);
+        
+        // Calculate how much more can be assigned to this user
+        const availableQuantity = maxQuantity - (totalAssignedQuantity - (splitItems[itemName]?.[user] || 0));
+        
+        // Adjust the new value to be within the available range
+        const adjustedQuantity = Math.min(Math.max(0, value), availableQuantity);
+        
         setSplitItems(prev => ({
             ...prev,
             [itemName]: {
@@ -110,6 +134,12 @@ const SplitReceipt = () => {
     };
 
     const handleSplitDrawerOpen = (itemName, user, currentQuantity) => {
+        const item = receipt.gptCopy.items.find(i => i.name === itemName);
+        setCurrentItem({
+            name: itemName,
+            initialQuantity: currentQuantity,
+            totalQuantity: item.quantity
+        });
         setSelectedItemName(itemName);
         setSelectedUser(user);
         setQuantity(currentQuantity);
@@ -122,9 +152,10 @@ const SplitReceipt = () => {
 
     const handleQuantityUpdate = (newQuantity) => {
         handleQuantityChange(selectedItemName, selectedUser, newQuantity);
+        setQuantity(newQuantity);  // Update the quantity state
         handleSplitDrawerClose();
     };
-
+    
     const handleSplitReceipt = () => {
         const usersSplit = selectedMembers.reduce((acc, user) => {
             acc[user] = { items: [], total: 0 };
@@ -219,6 +250,7 @@ const SplitReceipt = () => {
                 user={selectedUser}
                 quantity={quantity}
                 onQuantityChange={handleQuantityUpdate}
+                maxQuantity={currentItem ? currentItem.totalQuantity : 0}
             />
         </div>
     );
