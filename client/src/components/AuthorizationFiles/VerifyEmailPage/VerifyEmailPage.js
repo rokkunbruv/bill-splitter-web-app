@@ -2,11 +2,18 @@ import React from 'react';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import VerifyEmailBG from '../../Backgrounds/VerifyEmailBG.svg';
 import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NumberPad from './Numpad.jsx';
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { verifyOTP, verifyEmail } from '../../../actions/auth.js';
+import { VERIFY_OTP_SUCCESS, VERIFY_EMAIL_SUCCESS } from '../../../types/auth.js';
 
 const VerifyEmailPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const email = useSelector(state => state.authReducer.verifyEmail.email)
+
     const [code, setCode] = useState(['', '', '', '', '', '']);
   
     const handlePadClick = (value) => {
@@ -28,15 +35,44 @@ const VerifyEmailPage = () => {
         }
       }
     };
-  
-    const handleSubmit = () => {
+    
+    const [error, setError] = useState('')
+
+    const handleSubmit = async (event) => {
       const codeString = code.join('');
       console.log('Submitted code:', codeString);
+
+      event.preventDefault();
+        const response = await dispatch(verifyOTP(codeString));
+        console.log(response);
+
+        if (response.type === VERIFY_OTP_SUCCESS) {
+          navigate('/welcome');
+        } else {
+           if (response.error) {         
+                setError(response.error);         
+           } else {
+                setError('An unexpected error has occured.');
+           }
+        }
     };
 
-    const handleResend = () => {
+    const handleResend = async (event) => {
         console.log('Resend code');
-        // Add your resend logic here
+        
+        event.preventDefault();
+        const response = await dispatch(verifyEmail(email));
+        console.log(response);
+
+        if (response.type === VERIFY_EMAIL_SUCCESS) {
+          console.log('Email has been resent.')
+        } else {
+           if (response.error) {         
+                setError(response.error);         
+           } else {
+                setError('An unexpected error has occured.');
+           }
+        }
       };
   
     return (

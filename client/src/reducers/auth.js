@@ -1,12 +1,33 @@
 
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, 
-    SEND_CHANGE_PASS_EMAIL_REQUEST, SEND_CHANGE_PASS_EMAIL_SUCCESS, SEND_CHANGE_PASS_EMAIL_FAILURE, 
+import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE,
+    SEND_CHANGE_PASS_EMAIL_REQUEST, SEND_CHANGE_PASS_EMAIL_SUCCESS, SEND_CHANGE_PASS_EMAIL_FAILURE,
     VERIFY_CHANGE_PASS_REQUEST, VERIFY_CHANGE_PASS_SUCCESS, VERIFY_CHANGE_PASS_FAILURE,
+    RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE, 
+    SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE, 
+    VERIFY_EMAIL_REQUEST, VERIFY_EMAIL_SUCCESS, VERIFY_EMAIL_FAILURE, 
+    VERIFY_OTP_REQUEST, VERIFY_OTP_SUCCESS, VERIFY_OTP_FAILURE,
     RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE,
     VERIFY_TOKEN_REQUEST, VERIFY_TOKEN_SUCCESS, VERIFY_TOKEN_FAILURE
 } from '../types/auth';
 
 const initialState = {
+    signup: {
+        user: null,
+        loading: false,
+        success: false,
+        error: null
+    },
+    verifyEmail: {
+        email: null,
+        loading: false,
+        success: false,
+        error: null
+    },
+    verifyOTP: {
+        loading: false,
+        success: false,
+        error: null
+    },
     login: {
         user: null,
         loading: false,
@@ -39,6 +60,31 @@ const initialState = {
 
 const authReducer = (state = initialState, action) => {
     switch(action.type) {
+        
+        //signup reducers
+        case SIGNUP_REQUEST:
+            return { ...state, signup: { loading: true, success: false, error: null } };
+        case SIGNUP_SUCCESS:
+            return { ...state, signup: { loading: false, user: action.payload, success: true, error: null } };
+        case SIGNUP_FAILURE:
+            return { ...state, signup: { loading: false, success: false, error: action.error } };
+
+        //verifyEmail reducers
+        case VERIFY_EMAIL_REQUEST:
+            return { ...state, verifyEmail: { loading: true, success: false, error: null } };
+        case VERIFY_EMAIL_SUCCESS:
+            return { ...state, verifyEmail: { email: action.payload.email, loading: false, success: true, error: null } };
+        case VERIFY_EMAIL_FAILURE:
+            return { ...state, verifyEmail: { loading: false, success: false, error: action.error } };
+
+        //verifyOTP reducers
+        case VERIFY_OTP_REQUEST:
+            return { ...state, verifyOTP: { loading: true, success: false, error: null } };
+        case VERIFY_OTP_SUCCESS:
+            return { ...state, verifyOTP: { loading: false, success: true, error: null } };
+        case VERIFY_OTP_FAILURE:
+            return { ...state, verifyOTP: { loading: false, success: false, error: action.error } };
+
         // login reducers
         case LOGIN_REQUEST:
             return { ...state, login: { loading: true, success: false, error: null } };

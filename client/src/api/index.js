@@ -15,6 +15,9 @@ export const fetchMembers = () => axios.get(`${url}/members`);
 export const createMember = (name) => axios.post(`${url}/members`, { name });
 
 // Authorization API calls
+export const signup = (name, email, password, confirmPassword) => axios.post(`${url}/api/auth/signup`, { name, email, password, confirmPassword });
+export const verifyEmail = (verifyOTP) => axios.post(`${url}/api/auth/verifyOTP`, { verifyOTP });
+export const sendOTPVerificationEmail = (email) => axios.post(`${url}/api/auth/sendOTP`, { email });
 export const login = (credentials) => axios.get(`${url}/api/auth/login`, {
         headers: { Authorization: `Basic ${credentials}` } });
 export const sendChangePassword = (email) => axios.post(`${url}/api/auth/forgot-password`, { email });
