@@ -3,21 +3,22 @@ import { Drawer, Box, Typography, IconButton, Button } from '@mui/material';
 import { ReactComponent as DecreaseQty } from '../icons/decrease.svg';
 import { ReactComponent as IncreaseQty } from '../icons/increase.svg';
 
-const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantityChange, maxQuantity }) => {
+const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantityChange, maxQuantity, totalAssigned }) => {
     const [currentQuantity, setCurrentQuantity] = useState(quantity);
 
     useEffect(() => {
         if (open) {
             setCurrentQuantity(quantity);
-            console.log(`Drawer opened. Initial quantity: ${quantity}, Max quantity: ${maxQuantity}`);
+            console.log(`Drawer opened. Initial quantity: ${quantity}, Max quantity: ${maxQuantity}, Total assigned: ${totalAssigned}`);
         }
-    }, [open, quantity, maxQuantity]);
+    }, [open, quantity, maxQuantity, totalAssigned]);
 
     const handleIncrease = () => {
-        console.log(`Increasing. Current: ${currentQuantity}, Max: ${maxQuantity}`);
-        if (currentQuantity < maxQuantity) {
+        console.log(`Increasing. Current: ${currentQuantity}, Max: ${maxQuantity}, Total assigned: ${totalAssigned}`);
+        const availableQuantity = maxQuantity - (totalAssigned - quantity);
+        if (currentQuantity < availableQuantity) {
             setCurrentQuantity(prev => {
-                const newValue = Math.min(maxQuantity, prev + 1);
+                const newValue = Math.min(availableQuantity, prev + 1);
                 console.log(`Increased to: ${newValue}`);
                 return newValue;
             });
@@ -48,7 +49,6 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
                     <Box display="flex" alignItems="center" gap={1}>
                         <IconButton 
                             aria-label="decrease" 
-                            // onClick={handleDecrease}
                             onClick={() => {
                                 console.log('Decrease clicked');
                                 handleDecrease();
@@ -60,12 +60,11 @@ const SplitDetailDrawer = ({ open, onClose, itemName, user, quantity, onQuantity
                         <Typography variant="h4">{currentQuantity}</Typography>
                         <IconButton 
                             aria-label="increase" 
-                            // onClick={handleIncrease}
                             onClick={() => {
                                 console.log('Increase clicked');
                                 handleIncrease();
                             }}
-                            disabled={currentQuantity >= maxQuantity}
+                            disabled={currentQuantity >= maxQuantity - (totalAssigned - quantity)}
                         >
                             <IncreaseQty width="30" height="30"/>
                         </IconButton>
