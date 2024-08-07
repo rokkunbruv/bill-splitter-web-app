@@ -9,6 +9,7 @@ import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { login } from '../../../actions/auth';
+import { LOGIN_SUCCESS } from '../../../types/auth';
 
 const SignInPage = () => {
     const navigate = useNavigate();
@@ -29,15 +30,27 @@ const SignInPage = () => {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const response = dispatch(login(email, password));
-        console.log(response);
+    // error state
+    const [error, setError] = useState('');
 
-        if (response.payload) {
+    // submit login credentials to server
+    const handleSubmit = async (event) => {
+        setError('');
+        event.preventDefault();
+
+        const credentials = btoa(`${email}:${password}`);
+        
+        const response = await dispatch(login(credentials));
+
+        if (response.type === LOGIN_SUCCESS) {
+            localStorage.setItem('user', response.payload.token);
             navigate('/welcome');
         } else {
-            console.log(response.error);
+            if (response.error) {
+                setError(response.error);
+            } else {
+                setError('An unexpected error has occurred.');
+            }
         }
     }
 
@@ -62,7 +75,7 @@ const SignInPage = () => {
                         }
                         to {
                             transform: translateX(0);
-                            opacity: 1;
+                            opacity: 1);
                         }
                     }
 
@@ -171,6 +184,7 @@ const SignInPage = () => {
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
 
@@ -201,6 +215,7 @@ const SignInPage = () => {
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
 
@@ -241,6 +256,20 @@ const SignInPage = () => {
                             Sign in
                         </Button>
                     </Box>
+                    {/* error message */}
+                    {error &&
+                    <Typography 
+                            variant = "h7"
+                            color="error"
+                            sx={{ 
+                                marginTop: '1rem', 
+                                fontSize: '15px', 
+                                textAlign: 'center' 
+                            }}
+                        >
+                            {error}
+                        </Typography>
+                    }
                 </div>
             </div>
         </>

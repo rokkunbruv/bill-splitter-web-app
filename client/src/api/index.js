@@ -15,7 +15,10 @@ export const fetchMembers = () => axios.get(`${url}/members`);
 export const createMember = (name) => axios.post(`${url}/members`, { name });
 
 // Authorization API calls
-export const login = (email, password) => axios.post(`${url}/api/auth/login`, { email, password });
+export const login = (credentials) => axios.get(`${url}/api/auth/login`, {
+        headers: { Authorization: `Basic ${credentials}` } });
 export const sendChangePassword = (email) => axios.post(`${url}/api/auth/forgot-password`, { email });
 export const verifyChangePassword = (resetCode) => axios.post(`${url}/api/auth/verify-reset-password`, { resetCode });
 export const resetPassword = (password, confirmPassword) => axios.post(`${url}/api/auth/reset-password`, { password, confirmPassword });
+export const verifyToken = (token) => axios.get(`${url}/api/auth/verify-token`, {
+    headers: { Authorization: `Bearer ${token}` } });
