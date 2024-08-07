@@ -3,10 +3,54 @@ import * as api from '../api';
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE,
          SEND_CHANGE_PASS_EMAIL_REQUEST, SEND_CHANGE_PASS_EMAIL_SUCCESS, SEND_CHANGE_PASS_EMAIL_FAILURE,
          VERIFY_CHANGE_PASS_REQUEST, VERIFY_CHANGE_PASS_SUCCESS, VERIFY_CHANGE_PASS_FAILURE,
-         RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE
+         RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE, SIGNUP_REQUEST, SIGNUP_SUCCESS, 
+         SIGNUP_FAILURE, VERIFY_EMAIL_REQUEST, VERIFY_EMAIL_SUCCESS, VERIFY_EMAIL_FAILURE, VERIFY_OTP_REQUEST, 
+         VERIFY_OTP_SUCCESS, VERIFY_OTP_FAILURE
  } from '../types/auth.js';
 
-export const login = (email, password) => async (dispatch) => {
+// name, email, pass, confirmpass
+
+export const signup = (name, email, password, confirmPassword) => async (dispatch) => {
+  
+    dispatch({ type: SIGNUP_REQUEST });
+
+    try {
+        const { data } = await api.signup(name, email, password, confirmPassword);
+        console.log(data)
+        dispatch({ type: SIGNUP_SUCCESS, payload: data });
+        return { type: SIGNUP_SUCCESS, payload: data }
+    } catch (error) {
+        dispatch({ type: SIGNUP_FAILURE, error: error.response.data.message });
+        return { type: SIGNUP_FAILURE, error: error.response.data.message }
+    }
+};
+export const verifyEmail = (email) => async (dispatch) => {
+    dispatch({ type: VERIFY_EMAIL_REQUEST });
+
+    try {
+        const { data } = await api.sendOTPVerificationEmail(email);
+        dispatch({ type: VERIFY_EMAIL_SUCCESS, payload: data });
+        return { type: VERIFY_EMAIL_SUCCESS, payload: data }
+    } catch (error) {
+        dispatch({ type: VERIFY_EMAIL_FAILURE, error: error.response.data.message });
+        return { type: VERIFY_EMAIL_FAILURE, error: error.response.data.message }
+    }
+}; 
+
+export const verifyOTP = (verifyOTP) => async (dispatch) => {
+    dispatch({ type: VERIFY_OTP_REQUEST });
+
+    try {
+        const { data } = await api.verifyEmail(verifyOTP);
+        dispatch({ type: VERIFY_OTP_SUCCESS, payload: data });
+        return { type: VERIFY_OTP_SUCCESS, payload: data }
+    } catch (error) {
+        dispatch({ type: VERIFY_OTP_FAILURE, error: error.response.data.message });
+        return { type: VERIFY_OTP_FAILURE, error: error.response.data.message }
+    }
+};
+
+ export const login = (email, password) => async (dispatch) => {
     dispatch({ type: LOGIN_REQUEST });
     
     try {

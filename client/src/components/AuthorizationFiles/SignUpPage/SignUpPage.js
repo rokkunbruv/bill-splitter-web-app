@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import SignUpBG from '../../Backgrounds/SignUpBG.svg'; 
 import { ReactComponent as NameIcon } from '../../icons/NameIcon.svg';
@@ -7,9 +7,69 @@ import { ReactComponent as PasswordIcon } from '../../icons/PasswordIcon.svg';
 import { ReactComponent as Visibility } from '../../icons/PasswordVisible.svg';
 import { ReactComponent as VisibilityOff } from '../../icons/PasswordInvisible.svg';
 import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; 
+import { signup, verifyEmail } from '../../../actions/auth';
+import { SIGNUP_SUCCESS, VERIFY_EMAIL_SUCCESS} from '../../../types/auth';
+
+
 
 const SignUpPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [name, setName] = useState('');
+    const handleName = (event) => {
+        setName(event.target.value);
+    }
+
+    // email state
+    const [email, setEmail] = useState('');
+    const handleEmail = (event) => {
+        setEmail(event.target.value);
+    }
+
+    // password state
+    const [password, setPassword] = useState('');
+    const handlePassword = (event) => {
+        setPassword(event.target.value);
+    }
+
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const handleConfirmPassword = (event) => {
+        setConfirmPassword(event.target.value);
+    }
+
+
+    const [error, setError] = useState('')
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const response = await dispatch(signup(name, email, password, confirmPassword));
+        console.log(response);
+
+        if (response.type === SIGNUP_SUCCESS) {
+            const sendEmail = await dispatch(verifyEmail(email))
+            console.log(email)
+            if (sendEmail === VERIFY_EMAIL_SUCCESS){
+                navigate('/verify-email');
+            } else {
+                if (response.error) {         
+                    setError(response.error);         
+               } else {
+                    setError('An unexpected error has occured.');
+               }
+            }
+            // navigate('/verify-email');
+        } else {
+           if (response.error) {         
+                setError(response.error);         
+           } else {
+                setError('An unexpected error has occured.');
+           }
+        }
+    }
+
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
@@ -137,6 +197,8 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
+                            value = {name}
+                            onChange = {handleName}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -153,6 +215,8 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
+                            value = {email}
+                            onChange = {handleEmail}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -181,6 +245,8 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
+                            value = {password}
+                            onChange = {handlePassword}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -209,6 +275,8 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
+                            value = {confirmPassword}
+                            onChange = {handleConfirmPassword}
                             variant="standard" 
                             fullWidth
                             margin="normal"
@@ -218,7 +286,7 @@ const SignUpPage = () => {
                     <Box sx={{
                         marginTop:'10px'
                     }}>
-                        <Button component={Link} to={`/verify-email`} variant="contained" color="secondary" style={{
+                        <Button component={Link} to={`/verify-email`} variant="contained" color="secondary" onClick={handleSubmit} style={{
                             boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
                             borderRadius: '15px',
                             width: '120px',
