@@ -17,6 +17,7 @@ const TakePhoto = () => {
                 }
             } catch (err) {
                 console.error("Error accessing camera:", err);
+                alert("Unable to access the camera. Please check your camera settings.");
             }
         };
 
@@ -27,7 +28,7 @@ const TakePhoto = () => {
                 stream.getTracks().forEach(track => track.stop());
             }
         };
-    }, [stream]);
+    }, []);
 
     const capturePhoto = () => {
         const canvas = document.createElement('canvas');
