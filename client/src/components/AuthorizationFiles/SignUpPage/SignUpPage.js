@@ -10,7 +10,7 @@ import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { signup, verifyEmail } from '../../../actions/auth';
-import { SIGNUP_SUCCESS, VERIFY_EMAIL_SUCCESS} from '../../../types/auth';
+import { SIGNUP_SUCCESS, VERIFY_EMAIL_SUCCESS } from '../../../types/auth';
 
 
 
@@ -49,10 +49,10 @@ const SignUpPage = () => {
         console.log(response);
 
         if (response.type === SIGNUP_SUCCESS) {
-            const sendEmail = await dispatch(verifyEmail(email))
-            console.log(email)
-            if (sendEmail === VERIFY_EMAIL_SUCCESS){
-                navigate('/verify-email');
+            const sendEmail = await dispatch(verifyEmail(email));
+
+            if (sendEmail.type === VERIFY_EMAIL_SUCCESS){
+                navigate(`/verify-email`);
             } else {
                 if (response.error) {         
                     setError(response.error);         
@@ -60,7 +60,6 @@ const SignUpPage = () => {
                     setError('An unexpected error has occured.');
                }
             }
-            // navigate('/verify-email');
         } else {
            if (response.error) {         
                 setError(response.error);         

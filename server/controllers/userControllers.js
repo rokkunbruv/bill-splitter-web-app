@@ -176,12 +176,14 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ mesage: "Account record doesn't exist or has been verified already. Please sign up or log in" });
     } 
 
-    if (UserOTPVerificationRecords[0].expiresAt < Date.now()) {
+    const pos = UserOTPVerificationRecords.length;
+
+    if (UserOTPVerificationRecords[pos-1].expiresAt < Date.now()) {
       await UserOTPVerification.deleteMany({ userId });
       return res.status(400).json({ message: "Code has expired. Please request again." });
     }
 
-    const validOTP = await bcrypt.compare(otp, UserOTPVerificationRecords[0].otp);
+    const validOTP = await bcrypt.compare(otp, UserOTPVerificationRecords[pos-1].otp);
 
     if (!validOTP) {
       return res.status(400).json({ message: "Invalid code passed. Check your inbox." });

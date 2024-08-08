@@ -13,6 +13,7 @@ const VerifyEmailPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const email = useSelector(state => state.authReducer.verifyEmail.email)
+    const userId = useSelector(state => state.authReducer.signup.user._id);
 
     const [code, setCode] = useState(['', '', '', '', '', '']);
   
@@ -43,8 +44,9 @@ const VerifyEmailPage = () => {
       console.log('Submitted code:', codeString);
 
       event.preventDefault();
-        const response = await dispatch(verifyOTP(codeString));
+        const response = await dispatch(verifyOTP(userId, codeString));
         console.log(response);
+        console.log(userId, codeString);
 
         if (response.type === VERIFY_OTP_SUCCESS) {
           navigate('/welcome');
@@ -58,7 +60,7 @@ const VerifyEmailPage = () => {
     };
 
     const handleResend = async (event) => {
-        console.log('Resend code');
+        console.log(email);
         
         event.preventDefault();
         const response = await dispatch(verifyEmail(email));
