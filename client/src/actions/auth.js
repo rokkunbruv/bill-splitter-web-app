@@ -26,7 +26,7 @@ export const signup = (name, email, password, confirmPassword) => async (dispatc
         return { type: SIGNUP_FAILURE, error: error.response.data.message }
     }
 };
-export const verifyEmail = (email) => async (dispatch) => {
+export const verifyEmail = (email, userId) => async (dispatch) => {
     dispatch({ type: VERIFY_EMAIL_REQUEST });
 
     try {

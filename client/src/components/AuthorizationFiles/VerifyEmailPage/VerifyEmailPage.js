@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import VerifyEmailBG from '../../Backgrounds/VerifyEmailBG.svg';
 import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import NumberPad from './Numpad.jsx';
-import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { verifyOTP, verifyEmail } from '../../../actions/auth.js';
 import { VERIFY_OTP_SUCCESS, VERIFY_EMAIL_SUCCESS } from '../../../types/auth.js';
@@ -16,6 +15,8 @@ const VerifyEmailPage = () => {
     const userId = useSelector(state => state.authReducer.signup.user._id);
 
     const [code, setCode] = useState(['', '', '', '', '', '']);
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
   
     const handlePadClick = (value) => {
       if (value === 'C') {
@@ -36,57 +37,59 @@ const VerifyEmailPage = () => {
         }
       }
     };
-    
-    const [error, setError] = useState('')
 
     const handleSubmit = async (event) => {
+      setError('');
+      setSuccessMessage('');
       const codeString = code.join('');
       console.log('Submitted code:', codeString);
-
+      console.log(userId);
       event.preventDefault();
-        const response = await dispatch(verifyOTP(userId, codeString));
-        console.log(response);
-        console.log(userId, codeString);
 
-        if (response.type === VERIFY_OTP_SUCCESS) {
-          navigate('/welcome');
+      const response = await dispatch(verifyOTP(userId, codeString));
+      console.log(response);
+
+      if (response.type === VERIFY_OTP_SUCCESS) {
+        navigate('/welcome');
+      } else {
+        if (response.error) {         
+          setError(response.error);         
         } else {
-           if (response.error) {         
-                setError(response.error);         
-           } else {
-                setError('An unexpected error has occured.');
-           }
+          setError('An unexpected error has occurred.');
         }
+      }
     };
 
     const handleResend = async (event) => {
-        console.log(email);
-        
-        event.preventDefault();
-        const response = await dispatch(verifyEmail(email));
-        console.log(response);
+      setError('');
+      setSuccessMessage('');
+      console.log('Resend code');
+      
+      event.preventDefault();
+      const response = await dispatch(verifyEmail(email));
+      console.log(response);
 
-        if (response.type === VERIFY_EMAIL_SUCCESS) {
-          console.log('Email has been resent.')
+      if (response.type === VERIFY_EMAIL_SUCCESS) {
+        setSuccessMessage('Email Resent'); // Set success message
+      } else {
+        if (response.error) {         
+          setError(response.error);         
         } else {
-           if (response.error) {         
-                setError(response.error);         
-           } else {
-                setError('An unexpected error has occured.');
-           }
+          setError('An unexpected error has occurred.');
         }
-      };
+      }
+    };
   
     return (
     <div 
         style={{ 
             backgroundImage: `url(${VerifyEmailBG})`, 
-            backgroundSize: 'cover',   // Ensures the image covers the container
-            backgroundPosition: 'center',  // Centers the background image
-            backgroundRepeat: 'no-repeat', // Prevents repeating the background image
-            height: '100vh',   // Full viewport height
-            width: '100vw',    // Full viewport width
-            position: 'fixed', // Fixed positioning to stay in place
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            height: '100vh',
+            width: '100vw',
+            position: 'fixed',
             top: 0,
             left: 0,
             margin: 0,      
@@ -108,10 +111,10 @@ const VerifyEmailPage = () => {
             <Box
             display="flex"
             flexDirection="column"
-            alignItems="flex-start" // Aligns content to the top left
+            alignItems="flex-start"
             width="100%"
             maxWidth={400}
-            padding={4} // Adds some padding around the content
+            padding={4}
             sx={{
                 gap:'10px'
             }}>
@@ -139,7 +142,7 @@ const VerifyEmailPage = () => {
             </Typography>
             <Typography
                 variant="h7"
-                align="left" // Aligns text to the left
+                align="left"
                 style={{ 
                 marginLeft: '10px',
                 fontSize: '15px',
@@ -171,7 +174,7 @@ const VerifyEmailPage = () => {
               key={index}
               variant="h7"
               style={{
-                border: '1px solid #ccc',
+                border: `1px solid ${error ? 'red' : '#ccc'}`,
                 borderRadius: 10,
                 minWidth: '40px', 
                 maxWidth: '60px', 
@@ -218,8 +221,6 @@ const VerifyEmailPage = () => {
         </Box>
 
         <Button
-        Button component={Link} 
-        to={`/welcome`}
           variant="contained"
           color="primary"
           onClick={handleSubmit}
@@ -233,6 +234,43 @@ const VerifyEmailPage = () => {
           Verify Email
         </Button>
       </Box>
+
+      {/* Error and Success Messages */}
+      {(error || successMessage) && (
+        <Box
+          sx={{ 
+            width: '100%', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginTop: '1rem' 
+          }}
+        >
+          {error && (
+            <Typography 
+              variant="h7"
+              color="error"
+              sx={{ 
+                fontSize: '15px', 
+                textAlign: 'center' 
+              }}
+            >
+              {error}
+            </Typography>
+          )}
+          {successMessage && (
+            <Typography 
+              variant="h7"
+              sx={{ 
+                fontSize: '15px', 
+                textAlign: 'center',
+                color: 'green' 
+              }}
+            >
+              {successMessage}
+            </Typography>
+          )}
+        </Box>
+      )}
 
             {/* NumberPad */}
             <Box
