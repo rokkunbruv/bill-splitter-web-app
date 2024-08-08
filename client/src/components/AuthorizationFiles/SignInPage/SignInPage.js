@@ -255,28 +255,6 @@ const SignInPage = () => {
                         }}>
                             Sign in
                         </Button>
-                        {/* error message */}
-                            {error && (
-                            <Box
-                                sx={{ 
-                                width: '100%', 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                marginTop: '1rem' 
-                                }}
-                            >
-                                <Typography 
-                                variant="h7"
-                                color="error"
-                                sx={{ 
-                                    fontSize: '15px', 
-                                    textAlign: 'center' 
-                                }}
-                                >
-                                {error}
-                                </Typography>
-                            </Box>
-                            )}
                     </Box>
                     {/* error message */}
                     {error &&

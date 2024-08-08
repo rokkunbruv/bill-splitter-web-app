@@ -47,7 +47,6 @@ const VerifyPasswordCode = () => {
     const codeString = code.join('');
 
     const response = await dispatch(verifyChangePassword(codeString));
-    console.log(response);
 
     if (response.type === VERIFY_CHANGE_PASS_SUCCESS) {
       navigate('/reset-password');

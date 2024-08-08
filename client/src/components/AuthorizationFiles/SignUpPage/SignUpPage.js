@@ -43,7 +43,6 @@ const SignUpPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const response = await dispatch(signup(name, email, password, confirmPassword));
-        console.log(response);
 
         if (response.type === SIGNUP_SUCCESS) {
             const sendEmail = await dispatch(verifyEmail(email));

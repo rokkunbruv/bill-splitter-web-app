@@ -41,13 +41,11 @@ const VerifyEmailPage = () => {
     const handleSubmit = async (event) => {
       setError('');
       setSuccessMessage('');
+
       const codeString = code.join('');
-      console.log('Submitted code:', codeString);
-      console.log(userId);
       event.preventDefault();
 
       const response = await dispatch(verifyOTP(userId, codeString));
-      console.log(response);
 
       if (response.type === VERIFY_OTP_SUCCESS) {
         navigate('/welcome');
@@ -63,11 +61,9 @@ const VerifyEmailPage = () => {
     const handleResend = async (event) => {
       setError('');
       setSuccessMessage('');
-      console.log('Resend code');
       
       event.preventDefault();
       const response = await dispatch(verifyEmail(email));
-      console.log(response);
 
       if (response.type === VERIFY_EMAIL_SUCCESS) {
         setSuccessMessage('Email Resent'); // Set success message
