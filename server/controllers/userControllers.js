@@ -19,7 +19,15 @@ let forgotPasswordEmail = '';
 // responds: user object and token
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      return res.status(400).json({ message: 'Authorization header not found' });
+    }
+
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString();
+    const [email, password] = credentials.split(':'); 
 
     if (!email || !password) {
       return res.status(400).json({ message: 'All fields must be filled' });
@@ -249,6 +257,8 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// requests: resetCode
+// responds: message
 const verifyResetPassword = async (req, res) => {
   try {
     const { resetCode } = req.body;
@@ -326,4 +336,27 @@ const resetPassword = async (req, res) => {
   }
 };
 
-export { login, signup, verifyOTP, sendOTPVerificationEmail, verifyResetPassword, resetPassword, forgotPassword };
+// requests: jwt token
+// responds: userId and valid state
+const verifyToken = async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(400).json({ valid: false, message: 'Authorization header not found' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(400).json({ valid: false, message: 'Token not found'});
+  }
+
+  jwt.verify(token, process.env.SECRET, (error, decoded) => {
+    if (error) {
+      return res.status(400).json({ valid: false, message: 'Token is invalid' });
+    }
+    return res.status(200).json({ valid: true, userId: decoded });
+  })
+}
+
+export { login, signup, verifyOTP, sendOTPVerificationEmail, verifyResetPassword, resetPassword, forgotPassword, verifyToken };

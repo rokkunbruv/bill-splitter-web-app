@@ -6,6 +6,7 @@ import { ReactComponent as BackIcon } from '../../icons/BackIconLight.svg'
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { sendChangePasswordEmail } from '../../../actions/auth';
+import { SEND_CHANGE_PASS_EMAIL_SUCCESS } from '../../../types/auth';
 
 const ForgotPasswordPage = () => {
     const dispatch = useDispatch();
@@ -17,15 +18,24 @@ const ForgotPasswordPage = () => {
         setEmail(event.target.value);
     }
 
-    // send change password confirmation email
-    const handleSendEmail = (event) => {
-        event.preventDefault();
-        const response = dispatch(sendChangePasswordEmail(email));
+    // error state
+    const [error, setError] = useState('');
 
-        if (response.payload) {
+    // send change password confirmation email
+    const handleSendEmail = async (event) => {
+        setError('');
+        event.preventDefault();
+        
+        const response = await dispatch(sendChangePasswordEmail(email));
+
+        if (response.type === SEND_CHANGE_PASS_EMAIL_SUCCESS) {
             navigate('/verify-password-code');
         } else {
-            console.log(response.error);
+            if (response.error) {
+                setError(response.error);
+            } else {
+                setError('An unexpected error has occurred.');
+            }
         }
     }
 
@@ -118,9 +128,9 @@ const ForgotPasswordPage = () => {
                         placeholder="Enter email address"
                         InputProps={{
                             startAdornment: (
-                              <InputAdornment position="start">
-                                <EmailIcon/>
-                              </InputAdornment>
+                                <InputAdornment position="start">
+                                    <EmailIcon/>
+                                </InputAdornment>
                             ),
                         }} 
                         value={email}
@@ -128,6 +138,8 @@ const ForgotPasswordPage = () => {
                         variant="standard" 
                         fullWidth
                         margin="normal"
+                        error={!!error}
+                        helperText={error}
                         sx={{ maxWidth: '100%' }}
                     />
 
@@ -158,7 +170,6 @@ const ForgotPasswordPage = () => {
                         Send code
                     </Button>
                 </Box>
-
                 </Box>
             </div>
         </div>

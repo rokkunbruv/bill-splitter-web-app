@@ -7,6 +7,7 @@ import NumberPad from '../VerifyEmailPage/Numpad.jsx';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendChangePasswordEmail, verifyChangePassword } from '../../../actions/auth';
+import { VERIFY_CHANGE_PASS_SUCCESS, SEND_CHANGE_PASS_EMAIL_SUCCESS } from '../../../types/auth.js';
 
 const VerifyPasswordCode = () => {
   const dispatch = useDispatch();
@@ -37,32 +38,49 @@ const VerifyPasswordCode = () => {
     }
   };
 
+  // error state
+  const [error, setError] = useState('');
+
   // submit inputted code to be verified
-  const handleSubmit = () => {
+  const handleSubmit = async (event) => {
+    setError('');
+    event.preventDefault();
+    
     const codeString = code.join('');
-    console.log('Submitted code:', codeString);
 
-    const response = dispatch(verifyChangePassword(codeString));
+    const response = await dispatch(verifyChangePassword(codeString));
+    console.log(response);
 
-    if (response.payload) {
+    if (response.type === VERIFY_CHANGE_PASS_SUCCESS) {
       navigate('/reset-password');
     } else {
-      console.log(response.error);
+      if (response.error) {
+        setError(response.error);
+      } else {
+          setError('An unexpected error has occurred.');
+      }
     }
   };
 
   // resend email verification
-  const handleResend = () => {
+  const handleResend = async () => {
+      setError('');  
+
       if (!email) {
-        console.log('Email not dispatched');
+        console.error('Email not dispatched');
       }
 
-      const response = dispatch(sendChangePasswordEmail(email));
+      const response = await dispatch(sendChangePasswordEmail(email));
 
-      if (response.payload) {
+      if (response.type === SEND_CHANGE_PASS_EMAIL_SUCCESS) {
+        // tell the user that the email verif. has been resent on the page
         console.log('Email verification has been resent');
       } else {
-        console.log(response.error);
+        if (response.error) {
+          setError(response.error);
+        } else {
+            setError('An unexpected error has occurred.');
+        }
       }
     };
 
@@ -160,7 +178,7 @@ const VerifyPasswordCode = () => {
             key={index}
             variant="h7"
             style={{
-              border: '1px solid #ccc',
+              border: `1px solid ${error ? 'red' : '#ccc'}`,
               borderRadius: 10,
               minWidth: '40px', 
               maxWidth: '60px', 
@@ -221,6 +239,28 @@ const VerifyPasswordCode = () => {
         Verify Email
       </Button>
     </Box>
+      {/* error message */}
+      {error && (
+        <Box
+          sx={{ 
+            width: '100%', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginTop: '1rem' 
+          }}
+        >
+          <Typography 
+            variant="h7"
+            color="error"
+            sx={{ 
+              fontSize: '15px', 
+              textAlign: 'center' 
+            }}
+          >
+            {error}
+          </Typography>
+        </Box>
+      )}
 
           {/* NumberPad */}
           <Box

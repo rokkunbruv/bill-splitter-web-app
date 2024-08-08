@@ -2,10 +2,13 @@
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE,
     SEND_CHANGE_PASS_EMAIL_REQUEST, SEND_CHANGE_PASS_EMAIL_SUCCESS, SEND_CHANGE_PASS_EMAIL_FAILURE,
     VERIFY_CHANGE_PASS_REQUEST, VERIFY_CHANGE_PASS_SUCCESS, VERIFY_CHANGE_PASS_FAILURE,
-    RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE, SIGNUP_REQUEST, SIGNUP_SUCCESS, 
-    SIGNUP_FAILURE, VERIFY_EMAIL_REQUEST, VERIFY_EMAIL_SUCCESS, VERIFY_EMAIL_FAILURE, VERIFY_OTP_REQUEST, 
-    VERIFY_OTP_SUCCESS, VERIFY_OTP_FAILURE
-} from '../types/auth.js';
+    RESET_PASS_REQUEST, RESET_PASS_SUCCESS, RESET_PASS_FAILURE, 
+    SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE, 
+    VERIFY_EMAIL_REQUEST, VERIFY_EMAIL_SUCCESS, VERIFY_EMAIL_FAILURE, 
+    VERIFY_OTP_REQUEST, VERIFY_OTP_SUCCESS, VERIFY_OTP_FAILURE,
+    VERIFY_TOKEN_REQUEST, VERIFY_TOKEN_SUCCESS, VERIFY_TOKEN_FAILURE
+} from '../types/auth';
+
 const initialState = {
     signup: {
         user: null,
@@ -45,6 +48,12 @@ const initialState = {
         loading: false,
         success: false,
         error: null
+    },
+    verifyToken: {
+        user: null,
+        loading: false,
+        success: false,
+        error: null
     }
 };
 
@@ -81,7 +90,7 @@ const authReducer = (state = initialState, action) => {
         case LOGIN_SUCCESS:
             return { ...state, login: { loading: false, user: action.payload, success: true, error: null } };
         case LOGIN_FAILURE:
-            return { ...state, login: { loading: false, success: false, error: action.error } };
+            return { ...state, login: { loading: false, success: false, error: action.payload } };
 
         // send change password email reducers
             case SEND_CHANGE_PASS_EMAIL_REQUEST:
@@ -106,6 +115,14 @@ const authReducer = (state = initialState, action) => {
             return { ...state, resetPass: { loading: false, success: true, error: null } };
         case RESET_PASS_FAILURE:
             return { ...state, resetPass: { loading: false, success: false, error: action.error } };
+
+        // verify token
+        case VERIFY_TOKEN_REQUEST:
+            return { ...state, verifyToken: { loading: true, success: false, error: null } };
+        case VERIFY_TOKEN_SUCCESS:
+            return { ...state, verifyToken: { userId: action.payload.userId, loading: false, success: true, error: null } };
+        case VERIFY_TOKEN_FAILURE:
+            return { ...state, verifyToken: { loading: false, success: false, error: action.error} };
 
         default:
             return state;

@@ -7,6 +7,7 @@ import { ReactComponent as Visibility } from '../../icons/PasswordVisible.svg';
 import { ReactComponent as VisibilityOff } from '../../icons/PasswordInvisible.svg';
 import { useDispatch } from 'react-redux';
 import { resetPassword } from '../../../actions/auth';
+import { RESET_PASS_SUCCESS } from '../../../types/auth';
 
 const ResetPasswordPage = () => {
     const dispatch = useDispatch();
@@ -24,17 +25,42 @@ const ResetPasswordPage = () => {
         setConfirmPassword(event.target.value);
     }
 
-    // submit new password
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const response = dispatch(resetPassword(password, confirmPassword));
+    // error state
+    const [error, setError] = useState('');
 
-        if (response.payload) {
-            navigate('/password-success');
-        } else {
-            console.log(response.error);
+    // submit new password
+    const handleSubmit = async (event) => {
+        setError('');
+        event.preventDefault();
+
+        let hasError = false;
+
+        if (!password) {
+            setError('Password is required');
+            hasError = true;
+        } else if (!confirmPassword) {
+            setError('Confirm password is required');
+            hasError = true;
+        } else if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            hasError = true;
         }
 
+        if (hasError) {
+            return;
+        }
+
+        const response = await dispatch(resetPassword(password, confirmPassword));
+
+        if (response.type === RESET_PASS_SUCCESS) {
+            navigate('/password-success');
+        } else {
+            if (response.error) {
+                setError(response.error);
+            } else {
+                setError('An unexpected error has occurred.');
+            }
+        }
     }
     
     const [showPassword, setShowPassword] = useState({ new: false, confirm: false });
@@ -155,6 +181,7 @@ const ResetPasswordPage = () => {
                     fullWidth
                     margin="normal"
                     sx={{ maxWidth: '100%' }}
+                    error={!!error && (error.includes('Password') || error.includes('match'))}
                 />
 
                 <TextField 
@@ -180,6 +207,7 @@ const ResetPasswordPage = () => {
                     fullWidth
                     margin="normal"
                     sx={{ maxWidth: '100%' }}
+                    error={!!error && (error.includes('Confirm') || error.includes('match'))}
                 />
 
                 <Box sx={{
@@ -214,6 +242,19 @@ const ResetPasswordPage = () => {
                     </Button>
                 </Box>
             </Box>
+            {/* error message */}
+            {error && 
+            <Typography 
+                variant="h7"
+                color="error" 
+                sx={{ 
+                    marginTop: '3rem', 
+                    textAlign: 'center',
+                    fontSize: '15px'
+                }}
+            >
+                {error}
+            </Typography>}
         </div>
     </div>
     );
