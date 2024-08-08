@@ -10,9 +10,7 @@ import { ReactComponent as BackIcon } from '../../icons/BackIconDark.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { signup, verifyEmail } from '../../../actions/auth';
-import { SIGNUP_SUCCESS, VERIFY_EMAIL_SUCCESS} from '../../../types/auth';
-
-
+import { SIGNUP_SUCCESS, VERIFY_EMAIL_SUCCESS } from '../../../types/auth';
 
 const SignUpPage = () => {
     const navigate = useNavigate();
@@ -23,13 +21,11 @@ const SignUpPage = () => {
         setName(event.target.value);
     }
 
-    // email state
     const [email, setEmail] = useState('');
     const handleEmail = (event) => {
         setEmail(event.target.value);
     }
 
-    // password state
     const [password, setPassword] = useState('');
     const handlePassword = (event) => {
         setPassword(event.target.value);
@@ -40,8 +36,7 @@ const SignUpPage = () => {
         setConfirmPassword(event.target.value);
     }
 
-
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -49,29 +44,28 @@ const SignUpPage = () => {
         console.log(response);
 
         if (response.type === SIGNUP_SUCCESS) {
-            const sendEmail = await dispatch(verifyEmail(email))
-            console.log(email)
-            if (sendEmail === VERIFY_EMAIL_SUCCESS){
+            const sendEmail = await dispatch(verifyEmail(email));
+            console.log(email);
+            if (sendEmail.type === VERIFY_EMAIL_SUCCESS) {
                 navigate('/verify-email');
             } else {
-                if (response.error) {         
-                    setError(response.error);         
-               } else {
-                    setError('An unexpected error has occured.');
-               }
+                if (response.error) {
+                    setError(response.error);
+                } else {
+                    setError('An unexpected error has occurred.');
+                }
             }
-            // navigate('/verify-email');
         } else {
-           if (response.error) {         
-                setError(response.error);         
-           } else {
-                setError('An unexpected error has occured.');
-           }
+            if (response.error) {
+                setError(response.error);
+            } else {
+                setError('An unexpected error has occurred.');
+            }
         }
     }
 
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
@@ -102,7 +96,7 @@ const SignUpPage = () => {
             </style>
             
             <div 
-                className="scroll-left"  // Apply the animation class here
+                className="scroll-left"
                 style={{ 
                     backgroundImage: `url(${SignUpBG})`, 
                     backgroundSize: 'cover',
@@ -117,7 +111,7 @@ const SignUpPage = () => {
                     padding: 0,
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'flex-end', // Aligns the box to the bottom of the screen
+                    alignItems: 'flex-end',
                     backgroundColor: '#070F2B'
                 }}
             >
@@ -168,14 +162,14 @@ const SignUpPage = () => {
                         backgroundColor: '#FDF8F8',
                         borderRadius: '50px',
                         width: '80%',
-                        maxWidth: '10000px',
+                        maxWidth: '1000px',
                         padding: '3rem',
                         boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
                         height: '52vh',
                         marginBottom: '-3rem',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'flex-start', // Align items to the top within the box
+                        justifyContent: 'flex-start',
                         alignItems: 'center',
                         opacity: 0.9,
                     }}>
@@ -197,11 +191,12 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
-                            value = {name}
-                            onChange = {handleName}
+                            value={name}
+                            onChange={handleName}
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
 
@@ -215,11 +210,12 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
-                            value = {email}
-                            onChange = {handleEmail}
+                            value={email}
+                            onChange={handleEmail}
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
 
@@ -245,11 +241,12 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
-                            value = {password}
-                            onChange = {handlePassword}
+                            value={password}
+                            onChange={handlePassword}
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
 
@@ -275,52 +272,87 @@ const SignUpPage = () => {
                                     </InputAdornment>
                                 ),
                             }} 
-                            value = {confirmPassword}
-                            onChange = {handleConfirmPassword}
+                            value={confirmPassword}
+                            onChange={handleConfirmPassword}
                             variant="standard" 
                             fullWidth
                             margin="normal"
+                            error={!!error}
                             sx={{ maxWidth: '100%' }}
                         />
                     </Box>
-                    <Box sx={{
-                        marginTop:'10px'
-                    }}>
-                        <Button component={Link} to={`/verify-email`} variant="contained" color="secondary" onClick={handleSubmit} style={{
-                            boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
-                            borderRadius: '15px',
-                            width: '120px',
-                            color: '#070F2B', 
-                            backgroundColor:'#BCC0D6', 
-                            marginTop: '10px',
-                            '&:hover': {backgroundColor: '#BCC0D6'}
-                            }}>
+                    <Box sx={{ marginTop: '10px' }}>
+                        <Button 
+                            component={Link} 
+                            to={`/verify-email`} 
+                            variant="contained" 
+                            color="secondary" 
+                            onClick={handleSubmit} 
+                            style={{
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
+                                borderRadius: '15px',
+                                width: '120px',
+                                color: '#070F2B', 
+                                backgroundColor:'#BCC0D6', 
+                                marginTop: '10px',
+                                '&:hover': { backgroundColor: '#BCC0D6' }
+                            }}
+                        >
                             Sign up
                         </Button>
                     </Box>
-                    <Box sx ={{
-                        display:'flex',
+                    <Box sx={{
+                        display: 'flex',
                         flexDirection: 'row',
                         gap: '0 rem',
                         alignItems: 'center',
                         justifyContent: 'center',
                         marginTop: '20px'
                     }}>
-                        <Typography variant='h7' sx={{
-                             marginTop: '0.5rem', 
-                        }}>
+                        <Typography 
+                            variant='h7' 
+                            sx={{ marginTop: '0.5rem' }}
+                        >
                             Already have an account?
                         </Typography>
-                        <Button component={Link} to={`/sign-in-page`} variant="text" color="secondary" 
+                        <Button 
+                            component={Link} 
+                            to={`/sign-in-page`} 
+                            variant="text" 
+                            color="secondary" 
                             style={{ 
-                            color: '#535C91',
-                            margin:'10px 0 0 0',
-                            fontWeight: 'bold',
-                            '&:hover': {backgroundColor: '#535C91'}
-                            }}>
-                        Sign in
-                    </Button>
+                                color: '#535C91',
+                                margin: '10px 0 0 0',
+                                fontWeight: 'bold',
+                                '&:hover': { backgroundColor: '#535C91' }
+                            }}
+                        >
+                            Sign in
+                        </Button>
+                        
                     </Box>
+                    {/* error message */}
+                    {error && (
+                        <Box
+                            sx={{ 
+                            width: '100%', 
+                            display: 'flex', 
+                            justifyContent: 'center', 
+                            marginTop: '1rem' 
+                            }}
+                        >
+                            <Typography 
+                            variant="h7"
+                            color="error"
+                            sx={{ 
+                                fontSize: '15px', 
+                                textAlign: 'center' 
+                            }}
+                            >
+                            {error}
+                            </Typography>
+                        </Box>
+                        )}
                 </div>
             </div>
         </>

@@ -24,24 +24,24 @@ export const signup = (name, email, password, confirmPassword) => async (dispatc
         return { type: SIGNUP_FAILURE, error: error.response.data.message }
     }
 };
-export const verifyEmail = (email) => async (dispatch) => {
+export const verifyEmail = (email, userId) => async (dispatch) => {
     dispatch({ type: VERIFY_EMAIL_REQUEST });
 
     try {
-        const { data } = await api.sendOTPVerificationEmail(email);
-        dispatch({ type: VERIFY_EMAIL_SUCCESS, payload: data });
-        return { type: VERIFY_EMAIL_SUCCESS, payload: data }
+        const { data } = await api.sendOTPVerificationEmail(email, userId);
+        dispatch({ type: VERIFY_EMAIL_SUCCESS, payload: {data,email}});
+        return { type: VERIFY_EMAIL_SUCCESS, payload: {data,email} }
     } catch (error) {
         dispatch({ type: VERIFY_EMAIL_FAILURE, error: error.response.data.message });
         return { type: VERIFY_EMAIL_FAILURE, error: error.response.data.message }
     }
 }; 
 
-export const verifyOTP = (verifyOTP) => async (dispatch) => {
+export const verifyOTP = (userId, verifyOTP) => async (dispatch) => {
     dispatch({ type: VERIFY_OTP_REQUEST });
 
     try {
-        const { data } = await api.verifyEmail(verifyOTP);
+        const { data } = await api.verifyEmail(userId, verifyOTP);
         dispatch({ type: VERIFY_OTP_SUCCESS, payload: data });
         return { type: VERIFY_OTP_SUCCESS, payload: data }
     } catch (error) {
