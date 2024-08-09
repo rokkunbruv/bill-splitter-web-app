@@ -21,9 +21,9 @@ const Members = () => {
     };
 
     return (
-        <Container maxWidth="md">
-            <Paper elevation={3} sx={{ padding: 2, marginTop: 4 }}>
-                <Typography variant="h4" gutterBottom>
+        <Container maxWidth="sm">
+            <Paper elevation={3} sx={{ padding: 1.5, marginTop: 4 }}>
+                <Typography variant="h7" fontSize='30px' fontWeight='bold' gutterBottom>
                     Friends
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ marginBottom: 2 }}>
