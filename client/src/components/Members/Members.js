@@ -24,19 +24,19 @@ const Members = () => {
         <Container maxWidth="md">
             <Paper elevation={3} sx={{ padding: 2, marginTop: 4 }}>
                 <Typography variant="h4" gutterBottom>
-                    Members
+                    Friends
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ marginBottom: 2 }}>
                     <TextField
                         fullWidth
                         variant="outlined"
-                        label="Add new member"
+                        label="Add new friend"
                         value={newMember}
                         onChange={(e) => setNewMember(e.target.value)}
                         sx={{ marginBottom: 1 }}
                     />
-                    <Button type="submit" variant="contained" color="primary">
-                        Add Member
+                    <Button type="submit" variant="contained" color="primary" sx={{backgroundColor: '#535C91'}}>
+                        Add Friend
                     </Button>
                 </Box>
                 <List>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, AppBar, Typography, Box } from '@mui/material';
+import { Container, AppBar, Typography, Box, SvgIcon } from '@mui/material';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
 import ReceiptList from './components/ReceiptList/ReceiptList';
@@ -11,17 +11,25 @@ import Profile from './components/Profile/Profile';
 import Members from './components/Members/Members';
 import BottomNavigator from './components/BottomNavigator/BottomNavigator';
 import TakePhoto from './components/TakePhoto/TakePhoto';
+import ViewDetails from './components/ViewDetails/ViewDetails';
+
+import './index.css';
 
 const App = () => {
+
   return (
     <Router>
-      <Container maxWidth="lg">
-        <AppBar position='static' color='inherit' sx={{ borderRadius: 15, margin: '30px 0', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-          <Typography component={Link} to="/" variant="h2" align='center' sx={{ color: 'rgba(0,183,255, 1)', textDecoration: 'none', fontFamily: 'Roboto, sans-serif', fontWeight: 'bold', letterSpacing: '0.1em', textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }} >
-            BillSplit
-          </Typography>
+      <Container maxWidth="lg" borderRadius='10'>
+        <AppBar 
+          position='fixed' 
+          color='inherit'
+          sx={{ height: '4rem', backgroundColor: '#C8C7E0', borderRadius: 0, margin: '0', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '60%'}}>
+            <Typography component={Link} to="/" align='center' variant= 'h7' sx={{ color: 'rgba(7, 15, 43, 1)', textDecoration: 'none', fontWeight: '550', fontSize: '2.5rem', letterSpacing: '0.02em' }} >
+              BillSplit
+            </Typography>
+            {/* add notif icon - maka navigate to notif page */}
         </AppBar>
-        <Box sx={{ pb: 7 }}>
+        <Box sx={{ pb: 7, margin:'23% 0 20% 0'}}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/add-receipt" element={<AddReceipt />} />
@@ -31,6 +39,7 @@ const App = () => {
             <Route path="/members" element={<Members />} />
             <Route path="/receipts" element={<ReceiptList />} />
             <Route path="/take-photo" element={<TakePhoto />} />
+            <Route path="/view-details" element={<ViewDetails />} />
           </Routes>
         </Box>
         <BottomNavigator />

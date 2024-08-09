@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, CircularProgress, Button } from '@mui/material';
+import { Grid, CircularProgress, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 import { getReceipts } from '../../actions/receipts';
@@ -16,13 +16,11 @@ const ReceiptList = () => {
 
     return (
         <div>
-            <Button component={Link} to="/add-receipt" variant="contained" color="primary" style={{ marginBottom: '20px' }}>
-                Add New Receipt
-            </Button>
+            {/* <Typography>Split History</Typography> */}
             {!receipts.length ? <CircularProgress /> : (
-                <Grid container alignItems="stretch" spacing={5}>
+                <Grid container spacing={1}>
                     {receipts.map((receipt) => (
-                        <Grid key={receipt._id} item xs={12} sm={6} md={4}>
+                        <Grid key={receipt._id} item xs={12}>
                             <Receipt receipt={receipt} />
                         </Grid>
                     ))}
