@@ -13,9 +13,11 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
     });
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const token = localStorage.getItem("user");
     
     useEffect(() => {
-        dispatch(getMembers());
+        dispatch(getMembers(token));
     }, [dispatch]);
 
     useEffect(() => {
@@ -26,7 +28,7 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(createReceipt(receiptData));
+        dispatch(createReceipt(receiptData, token));
         clear();
         navigate(`/`);
     };

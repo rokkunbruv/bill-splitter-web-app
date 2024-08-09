@@ -10,8 +10,10 @@ const ReceiptList = () => {
     const dispatch = useDispatch();
     const receipts = useSelector((state) => state.receipts);
 
+    const token = localStorage.getItem("user");
+
     useEffect(() => {
-        dispatch(getReceipts());
+        dispatch(getReceipts(token));
     }, [dispatch]);
 
     return (

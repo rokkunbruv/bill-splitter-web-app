@@ -16,9 +16,11 @@ const FinalSplit = () => {
     const [shareAmounts, setShareAmounts] = useState({}); // State to track share amounts
     const receipt = useSelector((state) => state.receipts.find((r) => r._id === id));
 
+    const token = localStorage.getItem("user");
+
     useEffect(() => {
         if (!receipt) {
-            dispatch(getReceipts());
+            dispatch(getReceipts(token));
         }
     }, [dispatch, receipt]);
 

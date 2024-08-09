@@ -12,8 +12,10 @@ const Members = () => {
     const members = useSelector((state) => state.members);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
+    const token = localStorage.getItem("user");
+
     useEffect(() => {
-        dispatch(getMembers());
+        dispatch(getMembers(token));
     }, [dispatch]);
 
     const handleSubmit = (e) => {

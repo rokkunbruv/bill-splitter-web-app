@@ -18,7 +18,6 @@ export const signup = (name, email, password, confirmPassword) => async (dispatc
 
     try {
         const { data } = await api.signup(name, email, password, confirmPassword);
-        console.log(data)
         dispatch({ type: SIGNUP_SUCCESS, payload: data });
         return { type: SIGNUP_SUCCESS, payload: data }
     } catch (error) {
@@ -52,11 +51,11 @@ export const verifyOTP = (userId, verifyOTP) => async (dispatch) => {
     }
 };
 
- export const login = (email, password) => async (dispatch) => {
+ export const login = (credentials) => async (dispatch) => {
     dispatch({ type: LOGIN_REQUEST });
     
     try {
-        const { data } = (await api.login(email, password));
+        const { data } = (await api.login(credentials));
         dispatch({ type: LOGIN_SUCCESS, payload: data });
         return { type: LOGIN_SUCCESS, payload: data };
     } catch (error) {

@@ -32,13 +32,15 @@ const SplitReceipt = () => {
     const [currentItem, setCurrentItem] = useState(null);
     const [totalAssignedQuantities, setTotalAssignedQuantities] = useState({});
 
+    const token = localStorage.getItem("user");
+
     useEffect(() => {
-        dispatch(getMembers());
+        dispatch(getMembers(token));
     }, [dispatch]);
 
     useEffect(() => {
         if (!receipt) {
-            dispatch(getReceipts());
+            dispatch(getReceipts(token));
         } else {
             const initialSplitItems = receipt.gptCopy.items.reduce((acc, item) => {
                 acc[item.name] = (receipt.usersWithItems || []).reduce((userAcc, user) => {
@@ -85,7 +87,7 @@ const SplitReceipt = () => {
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(createReceipt(receiptData));
+        dispatch(createReceipt(receiptData, token));
         clear();
         navigate('/');
     };
@@ -162,7 +164,7 @@ const SplitReceipt = () => {
             });
         });
 
-        dispatch(updateReceiptSplit(receipt._id, usersSplit));
+        dispatch(updateReceiptSplit(receipt._id, usersSplit, token));
         navigate(`/final-split/${id}`);
     };
 

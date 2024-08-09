@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Container, AppBar, Typography, Box, SvgIcon, Button } from '@mui/material';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
@@ -27,11 +27,16 @@ import './index.css';
 
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem("user"));
+  }, [isAuthenticated]);
 
   return (
     <Router>
       <Container maxWidth="lg" borderRadius='10'>
-        <AppBar 
+        {isAuthenticated && <AppBar 
           position='fixed' 
           color='inherit'
           sx={{ height: '4rem', backgroundColor: '#C8C7E0', borderRadius: 0, margin: '0', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '60%'}}>
@@ -39,7 +44,7 @@ const App = () => {
               BillSplit
             </Typography>
             {/* add notif icon - maka navigate to notif page */}
-        </AppBar>
+        </AppBar>}
         <Box sx={{ pb: 7, margin:'23% 0 20% 0'}}>
           <Routes>
             <Route path="/" element={<GetStartedPage />} />
@@ -62,7 +67,7 @@ const App = () => {
             <Route path="/view-details" element={<ViewDetails />} />
           </Routes>
         </Box>
-        <BottomNavigator />
+        {isAuthenticated && <BottomNavigator />}
       </Container>
     </Router>
   );

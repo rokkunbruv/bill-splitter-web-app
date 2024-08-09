@@ -3,12 +3,24 @@ import axios from 'axios';
 const url = 'http://localhost:5000';
 
 // Existing receipt-related API calls
-export const fetchReceipts = () => axios.get(`${url}/receipts`);
-export const createReceipt = (newReceipt) => axios.post(`${url}/receipts`, newReceipt);
-export const updateReceipt = (id, updatedReceipt) => axios.patch(`${url}/receipts/${id}`, updatedReceipt);
-export const deleteReceipt = (id) => axios.delete(`${url}/receipts/${id}`);
-export const assignItemToUser = (receiptId, user, item) => axios.patch(`${url}/receipts/${receiptId}/assign`, { user, item });
-export const updateReceiptSplit = (id, splitData) => axios.patch(`${url}/receipts/${id}/split`, splitData);
+export const fetchReceipts = (token) => axios.get(`${url}/receipts`, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const createReceipt = (newReceipt, token) => axios.post(`${url}/receipts`, newReceipt, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const updateReceipt = (id, updatedReceipt, token) => axios.patch(`${url}/receipts/${id}`, updatedReceipt, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const deleteReceipt = (id, token) => axios.delete(`${url}/receipts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const assignItemToUser = (receiptId, user, item, token) => axios.patch(`${url}/receipts/${receiptId}/assign`, { user, item }, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const updateReceiptSplit = (id, splitData, token) => axios.patch(`${url}/receipts/${id}/split`, splitData, {
+        headers: { Authorization: `Bearer ${token}` }
+});
 
 // New member-related API calls
 export const fetchMembers = () => axios.get(`${url}/members`);
