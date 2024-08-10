@@ -43,7 +43,8 @@ const SignInPage = () => {
         const response = await dispatch(login(credentials));
 
         if (response.type === LOGIN_SUCCESS) {
-            localStorage.setItem('user', response.payload.token);
+            localStorage.setItem("token", response.payload.token);
+            
             navigate('/welcome');
         } else {
             if (!response.error) {

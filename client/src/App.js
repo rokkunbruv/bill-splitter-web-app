@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Container, AppBar, Typography, Box, SvgIcon, Button } from '@mui/material';
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
-
+import { BrowserRouter as Router, Route, Routes, Link, useLocation, Navigate } from 'react-router-dom';
 
 import ReceiptList from './components/ReceiptList/ReceiptList';
 import AddReceipt from './components/AddReceipt/AddReceipt';
@@ -26,7 +25,7 @@ import Header from './components/Header/Header';
 
 import './index.css';
 
-const App = () => {
+const App = () => {  
   return (
       <Router>
         <Container maxWidth="lg" borderRadius='10'>

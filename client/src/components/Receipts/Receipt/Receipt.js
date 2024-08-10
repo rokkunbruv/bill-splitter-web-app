@@ -1,14 +1,24 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardActions, CardContent, Button, Typography, Box, SwipeableDrawer, IconButton, AppBar, BottomNavigation } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { deleteReceipt } from '../../../actions/receipts';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ViewDetails from '../../ViewDetails/ViewDetails';
 
 const Receipt = ({ receipt }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
 
     const handleCardClick = () => {
         setDrawerOpen(true);

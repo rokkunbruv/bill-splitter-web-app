@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Drawer, Card, Box, Typography, IconButton, Grid, AppBar } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../icons/closeIcon.svg';
+import { useNavigate } from 'react-router-dom';
 
 const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
+    const navigate = useNavigate();
+    
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
+
     const usersWithItems = Array.isArray(receipt.usersWithItems) ? receipt.usersWithItems : [];
 
     // Calculate total bill

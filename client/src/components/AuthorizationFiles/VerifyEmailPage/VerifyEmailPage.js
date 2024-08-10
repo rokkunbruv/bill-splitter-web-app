@@ -48,6 +48,8 @@ const VerifyEmailPage = () => {
       const response = await dispatch(verifyOTP(userId, codeString));
 
       if (response.type === VERIFY_OTP_SUCCESS) {
+        localStorage.setItem("token", response.payload.token);
+        
         navigate('/welcome');
       } else {
         if (response.error) {         

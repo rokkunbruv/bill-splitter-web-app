@@ -30,6 +30,15 @@ const TakePhoto = () => {
         };
     }, []);
 
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
+
     const capturePhoto = () => {
         const canvas = document.createElement('canvas');
         canvas.width = videoRef.current.videoWidth;

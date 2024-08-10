@@ -9,12 +9,6 @@ import UserOTPVerification from '../models/UserOTPVerification.js';
 
 let forgotPasswordEmail = '';
 
-// what do i want to do:
-// 1. signup should remain as is
-// 3. find a way such that the otp schema will get expired
-// 4. make a controller that checks if the inputted otp is same as the sent otp
-//    - if it matches, it should return the jwt token of that user so that they can actually access the app
-
 // requests: email and password
 // responds: user object and token
 const login = async (req, res) => {
@@ -366,7 +360,7 @@ const verifyToken = async (req, res) => {
 
   const user = await User.findById(userId);
 
-  res.status(200).json({ valid: true, user: { userId: user._id, name: user.name, email: user.email }})
+  res.status(200).json({ valid: true, user: { userId: userId, name: user.name, email: user.email }})
 }
 
 export { login, signup, verifyOTP, sendOTPVerificationEmail, verifyResetPassword, resetPassword, forgotPassword, verifyToken };

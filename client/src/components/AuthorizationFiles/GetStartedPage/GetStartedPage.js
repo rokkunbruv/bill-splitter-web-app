@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import GetStartedBG from '../../Backgrounds/GetStartedBg.svg'; 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { verifyToken } from '../../../actions/auth';
 
@@ -15,20 +15,27 @@ const GetStartedPage = () => {
     const handleClick = async (event) => {
         event.preventDefault();
 
-        const token = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
 
         if (!token) {
-            return navigate('sign-in-page');
+            return navigate('sign-up-page');
         }
 
         const response = await dispatch(verifyToken(token));
 
-        if (response.payload.valid) {
+        if (response.payload.valid && response.payload.user.userId === userId) {
             return navigate('/home');
         } 
-        if (!response.payload.valid) {
+
+        if (!response.payload.valid || response.payload.user.userId != userId) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("username")
+            
             return navigate('/sign-up-page');
         }
+
         console.error('An unexpected error has occurred.');
     }
 

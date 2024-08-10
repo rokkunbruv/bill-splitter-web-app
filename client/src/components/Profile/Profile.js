@@ -1,22 +1,60 @@
-import React from 'react';
-import { Box, Typography, Card } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
 import {ReactComponent as ProfileIcon} from '../icons/profile1.svg';
 import {ReactComponent as EditIcon} from '../icons/edit.svg';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { verifyToken } from '../../actions/auth';
+import { VERIFY_TOKEN_SUCCESS } from '../../types/auth';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // get user details
+  let user = useSelector(state => state.authReducer.user.info);
+ 
+  // redirects to getting started page when user isn't authenticated
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    
+    if (!user) {
+      const fetchUser = async () => {
+        const response = await dispatch(verifyToken(token));
+        
+        if (response.type === VERIFY_TOKEN_SUCCESS) {
+          user = response.payload.user;
+        } else {
+          if (response.error) {
+            console.error(response.error);
+          } else {
+            console.error('An unexpected error has occurred.');
+          }
+        }
+      }
+
+      fetchUser();
+    }
+
+    if (!token) {
+        navigate("/");
+    }
+
+  });
+  
   return (
     <div>
       {/* <Typography>Profile</Typography> */}
       <Box sx={{position: 'center', display:'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
         <ProfileIcon style={{width: '8rem', height: '8rem', margin: '3rem 0 0 0'}} />   
           <Box sx={{display:'flex', flexDirection: 'row', alignItems: 'center'}}>
-            <Typography variant='h5' fontWeight='bold' margin="1rem">UserName</Typography>
+            <Typography variant='h5' fontWeight='bold' margin="1rem">{user.name}</Typography>
             <EditIcon />
           </Box>
           <Box sx={{width: '90%', height: '90%', display:'flex', flexDirection: 'column', margin: '1rem', gap: '0.2rem'}}>
             <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: 'auto' }}>
               <Typography variant='h7' fontWeight="bold" sx={{opacity: 0.5}}>Email</Typography>
-              <Typography variant='h7' fontWeight="bold">username@gmail.com</Typography>
+              <Typography variant='h7' fontWeight="bold">{user.email}</Typography>
             </Box>
 
             <Box sx={{display:'flex', flexDirection: 'row', justifyContent: "space-between", gap: 'auto' }}>

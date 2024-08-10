@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Typography, List, ListItem, ListItemText, TextField, Button, Paper, Box, Drawer, IconButton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMember, getMembers } from '../../actions/members';
+import { useNavigate } from 'react-router-dom';
 
 import {ReactComponent as FriendIcon} from '../icons/friendIcon.svg';
 import {ReactComponent as AddFriendIcon} from '../icons/addFriendIcon.svg';
@@ -11,12 +12,22 @@ const Members = () => {
     const dispatch = useDispatch();
     const members = useSelector((state) => state.members);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const navigate = useNavigate();
 
     const token = localStorage.getItem("user");
 
     useEffect(() => {
         dispatch(getMembers(token));
     }, [dispatch]);
+
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();

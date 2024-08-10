@@ -1,5 +1,5 @@
 // /components/BottomNavigator/BottomNavigator.js
-import React, { useState } from 'react';
+import React from 'react';
 import { BottomNavigation, BottomNavigationAction, Paper, Button } from '@mui/material';
 import {ReactComponent as HomeIconDefault} from '../icons/home.svg';
 import {ReactComponent as HomeIconSelected} from '../icons/homeSelected.svg';
@@ -34,7 +34,7 @@ const BottomNavigator = () => {
         setShowNewButtons(false);
         switch (newValue) {
             case 0:
-                navigate('/');
+                navigate('/home');
                 break;
             case 1:
                 navigate('/receipts');

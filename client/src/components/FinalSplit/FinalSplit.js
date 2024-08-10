@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardContent, Typography, Button, Grid, Box, TextField } from '@mui/material';
 import { getReceipts } from '../../actions/receipts';
@@ -23,6 +23,15 @@ const FinalSplit = () => {
             dispatch(getReceipts(token));
         }
     }, [dispatch, receipt]);
+
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
 
     if (!receipt) return 'Loading...';
 

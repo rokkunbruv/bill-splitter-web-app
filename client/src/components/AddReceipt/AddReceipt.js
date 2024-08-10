@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Form from '../Form/Form';
 
 const AddReceipt = () => {
@@ -15,6 +14,15 @@ const AddReceipt = () => {
             setImageData(location.state.imageData);
         }
     }, [location.state]);
+
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
 
     const handleTakePhoto = () => {
         navigate('/take-photo');

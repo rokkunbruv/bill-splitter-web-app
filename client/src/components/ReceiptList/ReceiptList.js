@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, CircularProgress, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { getReceipts } from '../../actions/receipts';
 import Receipt from '../Receipts/Receipt/Receipt';
 
 const ReceiptList = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const receipts = useSelector((state) => state.receipts);
 
     const token = localStorage.getItem("user");
@@ -15,6 +16,15 @@ const ReceiptList = () => {
     useEffect(() => {
         dispatch(getReceipts(token));
     }, [dispatch]);
+
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
 
     return (
         <div>

@@ -122,7 +122,7 @@ const authReducer = (state = initialState, action) => {
         case VERIFY_TOKEN_REQUEST:
             return { ...state, verifyToken: { loading: true, success: false, error: null } };
         case VERIFY_TOKEN_SUCCESS:
-            return { ...state, verifyToken: { loading: false, success: true, error: null }, user: { userId: action.payload.userId, authenticated: true } };
+            return { ...state, verifyToken: { loading: false, success: true, error: null }, user: { info: action.payload.user, authenticated: true } };
         case VERIFY_TOKEN_FAILURE:
             return { ...state, verifyToken: { loading: false, success: false, error: action.error} };
 

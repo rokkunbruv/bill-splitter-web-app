@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import PasswordResetBG from '../../Backgrounds/PasswordResetBG.svg'; 
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 const WelcomePage = () => {
     const navigate = useNavigate();

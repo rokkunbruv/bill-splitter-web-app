@@ -57,6 +57,15 @@ const SplitReceipt = () => {
         setIsContinueEnabled(checkIfAllFieldsFilled());
     }, [selectedMembers, splitItems]);    
 
+    // redirects to getting started page when user isn't authenticated
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem("token");
+        
+        if (!isAuthenticated) {
+            navigate("/");
+        }
+    });
+
     const checkIfAllFieldsFilled = () => {
         if (selectedMembers.length === 0) {
             return false;
