@@ -296,7 +296,9 @@ const SignUpPage = () => {
                                 color: '#070F2B', 
                                 backgroundColor:'#BCC0D6', 
                                 marginTop: '10px',
-                                '&:hover': { backgroundColor: '#BCC0D6' }
+                                '&:hover': { backgroundColor: '#BCC0D6' },
+                                textTransform: 'none',
+                                fontWeight: 'bold'
                             }}
                         >
                             Sign up
@@ -325,7 +327,8 @@ const SignUpPage = () => {
                                 color: '#535C91',
                                 margin: '10px 0 0 0',
                                 fontWeight: 'bold',
-                                '&:hover': { backgroundColor: '#535C91' }
+                                '&:hover': { backgroundColor: '#535C91' },
+                                textTransform: 'none'
                             }}
                         >
                             Sign in

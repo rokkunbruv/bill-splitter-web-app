@@ -236,7 +236,8 @@ const ResetPasswordPage = () => {
                             backgroundColor: '#535C91',
                             color: '#FDF8F8',
                             '&:hover': {backgroundColor: '#BCC0D6'},
-                            width: '200px'
+                            width: '200px',
+                            textTransform: 'none'
                         }}>
                         Reset Password
                     </Button>

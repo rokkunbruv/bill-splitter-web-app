@@ -216,6 +216,7 @@ const VerifyPasswordCode = () => {
                   marginTop: '15px',
                   color: '#535C91',
                   fontWeight: 600,
+                  textTransform: 'none'
                 }}
               >
                 Resend
@@ -231,7 +232,8 @@ const VerifyPasswordCode = () => {
                 marginTop: 10, 
                 backgroundColor: '#BCC0D6', 
                 color: '#070F2B', 
-                fontWeight: 600 
+                fontWeight: 600,
+                textTransform: 'none' 
               }}
             >
               Verify Email

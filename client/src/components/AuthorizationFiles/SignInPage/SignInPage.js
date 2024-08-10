@@ -231,6 +231,7 @@ const SignInPage = () => {
                                 alignItems: 'flex-end',
                                 justifyContent: 'flex-end',
                                 marginTop: '0px',
+                                textTransform: 'none'
                             }}>
                             Forgot Password?
                         </Button>
@@ -251,7 +252,9 @@ const SignInPage = () => {
                             color: '#070F2B', 
                             backgroundColor:'#BCC0D6', 
                             marginTop: '30px',
-                            '&:hover': {backgroundColor: '#BCC0D6'}
+                            '&:hover': {backgroundColor: '#BCC0D6'},
+                            textTransform: 'none',
+                            fontWeight: 'bold'
                         }}>
                             Sign in
                         </Button>

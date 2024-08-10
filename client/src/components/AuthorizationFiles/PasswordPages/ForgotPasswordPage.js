@@ -165,7 +165,8 @@ const ForgotPasswordPage = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontWeight: 'bold',
-                            '&:hover': {backgroundColor: '#BCC0D6'}
+                            '&:hover': {backgroundColor: '#BCC0D6'},
+                            textTransform: 'none'
                         }}>
                         Send code
                     </Button>
