@@ -46,7 +46,7 @@ const login = async (req, res) => {
     // jwt token will not expire
     const token = jwt.sign({ userId: user._id }, process.env.SECRET, {});
 
-    res.status(200).json({ message: 'Login successful', user: user, token: token });
+    res.status(200).json({ message: 'Login successful', user: { userId: user._id, name: user.name, email: user.email }, token: token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -98,7 +98,7 @@ const signup = async (req, res) => {
 
     await newUser.save();
 
-    res.status(200).json({ message: 'Signup successful', user: newUser });
+    res.status(200).json({ message: 'Signup successful', userId: newUser._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -197,7 +197,10 @@ const verifyOTP = async (req, res) => {
     // which will allow the user to access the app
     const token = jwt.sign({ userId: User._id }, process.env.SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ message: `User email verified successfully.`, token: token });
+    // looks for user
+    const user = await User.find({ _id: userId });
+
+    res.status(200).json({ message: `User email verified successfully.`, user: { userId: user._id, name: user.name, email: user.email }, token: token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -342,6 +345,8 @@ const resetPassword = async (req, res) => {
 const verifyToken = async (req, res) => {
   const authHeader = req.headers.authorization;
 
+  let userId = null;
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(400).json({ valid: false, message: 'Authorization header not found' });
   }
@@ -349,15 +354,19 @@ const verifyToken = async (req, res) => {
   const token = authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(400).json({ valid: false, message: 'Token not found'});
+    return res.status(400).json({ valid: false, message: 'Token not found' });
   }
 
   jwt.verify(token, process.env.SECRET, (error, decoded) => {
     if (error) {
       return res.status(400).json({ valid: false, message: 'Token is invalid' });
     }
-    return res.status(200).json({ valid: true, userId: decoded });
+    userId = decoded.userId;
   })
+
+  const user = await User.findById(userId);
+
+  res.status(200).json({ valid: true, user: { userId: user._id, name: user.name, email: user.email }})
 }
 
 export { login, signup, verifyOTP, sendOTPVerificationEmail, verifyResetPassword, resetPassword, forgotPassword, verifyToken };

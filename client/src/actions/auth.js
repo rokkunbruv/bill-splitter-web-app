@@ -110,7 +110,7 @@ export const verifyToken = (token) => async (dispatch) => {
     try {
         const { data } = await api.verifyToken(token);
         dispatch({ type: VERIFY_TOKEN_SUCCESS, payload: data });
-        return { type: VERIFY_TOKEN_SUCCESS, payload: data};
+        return { type: VERIFY_TOKEN_SUCCESS, payload: data };
     } catch (error) {
         dispatch({ type: VERIFY_TOKEN_FAILURE, error: error.message });
         return { type: RESET_PASS_FAILURE, error: error.message };

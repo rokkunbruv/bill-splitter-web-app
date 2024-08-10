@@ -9,13 +9,25 @@ import {ReactComponent as HistoryIconSelected} from '../icons/historySelected.sv
 import {ReactComponent as ProfileDefault} from '../icons/profile1.svg';
 import {ReactComponent as GroupIconDefault} from '../icons/group.svg';
 import {ReactComponent as GroupIconSelected} from '../icons/groupSelected.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../BottomNavigator/styles.css';
 
 const BottomNavigator = () => {
     const [value, setValue] = React.useState(0);
     const [showNewButtons, setShowNewButtons] = React.useState(false);
     const navigate = useNavigate();
+
+    const location = useLocation();
+
+    const authPaths = [
+        "/", "/sign-up-page", "/verify-email", "/sign-in-page",
+        "/forgot-password", "/verify-password-code", "/reset-password", "/welcome",
+        "/password-success"
+    ]
+
+    if (authPaths.some(path => location.pathname === path)) {
+        return null;
+    }
 
     const handleNavigation = (newValue) => {
         setValue(newValue);
@@ -51,7 +63,7 @@ const BottomNavigator = () => {
         navigate('/take-photo');
         setShowNewButtons(false);
     };
-
+    
     return (
         <div>
             <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>

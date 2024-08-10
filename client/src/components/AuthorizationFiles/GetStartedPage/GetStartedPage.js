@@ -1,14 +1,36 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import GetStartedBG from '../../Backgrounds/GetStartedBg.svg'; 
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { verifyToken } from '../../../actions/auth';
 
 const GetStartedPage = () => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     // // const SignUpPage = () => {
     //     navigate(`/sign-up-page`);
     // }
+
+    const handleClick = async (event) => {
+        event.preventDefault();
+
+        const token = localStorage.getItem("user");
+
+        if (!token) {
+            return navigate('sign-in-page');
+        }
+
+        const response = await dispatch(verifyToken(token));
+
+        if (response.payload.valid) {
+            return navigate('/home');
+        } 
+        if (!response.payload.valid) {
+            return navigate('/sign-up-page');
+        }
+        console.error('An unexpected error has occurred.');
+    }
 
     return (
         <div 
@@ -43,7 +65,7 @@ const GetStartedPage = () => {
 
                     BillSplit 
                 </Typography>
-                <Button component={Link} to={`/sign-up-page`} variant="contained" color="secondary" style={{ 
+                <Button variant="contained" color="secondary" onClick={handleClick} style={{ 
                     backgroundColor:'#9290C3',
                     borderRadius: '15px',
                     marginTop: '10px',

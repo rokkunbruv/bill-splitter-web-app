@@ -10,8 +10,12 @@ import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE,
 } from '../types/auth';
 
 const initialState = {
+    user: {
+        info: null, 
+        authenticated: false
+    },
     signup: {
-        user: null,
+        userId: null,
         loading: false,
         success: false,
         error: null
@@ -28,7 +32,6 @@ const initialState = {
         error: null
     },
     login: {
-        user: null,
         loading: false,
         success: false,
         error: null
@@ -50,7 +53,6 @@ const initialState = {
         error: null
     },
     verifyToken: {
-        user: null,
         loading: false,
         success: false,
         error: null
@@ -64,7 +66,7 @@ const authReducer = (state = initialState, action) => {
         case SIGNUP_REQUEST:
             return { ...state, signup: { loading: true, success: false, error: null } };
         case SIGNUP_SUCCESS:
-            return { ...state, signup: { loading: false, user: action.payload.user, success: true, error: null } };
+            return { ...state, signup: { userId: action.payload.userId, loading: false, success: true, error: null } };
         case SIGNUP_FAILURE:
             return { ...state, signup: { loading: false, success: false, error: action.error } };
 
@@ -80,7 +82,7 @@ const authReducer = (state = initialState, action) => {
         case VERIFY_OTP_REQUEST:
             return { ...state, verifyOTP: { loading: true, success: false, error: null } };
         case VERIFY_OTP_SUCCESS:
-            return { ...state, verifyOTP: { loading: false, success: true, error: null } };
+            return { ...state, verifyOTP: { loading: false, success: true, error: null }, user: { info: action.payload.user, authenticated: true } };
         case VERIFY_OTP_FAILURE:
             return { ...state, verifyOTP: { loading: false, success: false, error: action.error } };
 
@@ -88,7 +90,7 @@ const authReducer = (state = initialState, action) => {
         case LOGIN_REQUEST:
             return { ...state, login: { loading: true, success: false, error: null } };
         case LOGIN_SUCCESS:
-            return { ...state, login: { loading: false, user: action.payload, success: true, error: null } };
+            return { ...state, login: { loading: false, success: true, error: null }, user: { info: action.payload.user, authenticated: true } };
         case LOGIN_FAILURE:
             return { ...state, login: { loading: false, success: false, error: action.payload } };
 
@@ -120,7 +122,7 @@ const authReducer = (state = initialState, action) => {
         case VERIFY_TOKEN_REQUEST:
             return { ...state, verifyToken: { loading: true, success: false, error: null } };
         case VERIFY_TOKEN_SUCCESS:
-            return { ...state, verifyToken: { userId: action.payload.userId, loading: false, success: true, error: null } };
+            return { ...state, verifyToken: { loading: false, success: true, error: null }, user: { userId: action.payload.userId, authenticated: true } };
         case VERIFY_TOKEN_FAILURE:
             return { ...state, verifyToken: { loading: false, success: false, error: action.error} };
 

@@ -8,7 +8,7 @@ const WelcomePage = () => {
 
     // Function to handle click events and navigate to "../"
     const handleClick = () => {
-        navigate('../');
+        navigate('/home');
     };
 
     return (

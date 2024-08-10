@@ -12,7 +12,7 @@ const VerifyEmailPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const email = useSelector(state => state.authReducer.verifyEmail.email)
-    const userId = useSelector(state => state.authReducer.signup.user._id);
+    const userId = useSelector(state => state.authReducer.signup.userId);
 
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const [error, setError] = useState('');
