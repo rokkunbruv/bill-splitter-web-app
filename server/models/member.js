@@ -1,7 +1,10 @@
-// /server/models/member.js
 import mongoose from 'mongoose';
 
 const memberSchema = mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to the User model
+        required: true,
+    },
     name: String,
 });
 

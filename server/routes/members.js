@@ -1,10 +1,11 @@
-// /server/routes/members.js
 import express from 'express';
-import { getMembers, createMember } from '../controllers/members.js';
+import { getMembers, createMember, deleteMember } from '../controllers/members.js';
+import { protect } from '../middleware/userProtected.js'; 
 
 const router = express.Router();
 
-router.get('/', getMembers);
-router.post('/', createMember);
+router.get('/', protect, getMembers);
+router.post('/', protect, createMember);
+router.delete('/:id', protect, deleteMember);
 
 export default router;
