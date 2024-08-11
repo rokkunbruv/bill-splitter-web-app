@@ -23,6 +23,11 @@ const GetStartedPage = () => {
 
         const response = await dispatch(verifyToken(token));
 
+        if (!response) {
+            console.log('An unexpected error has occurred.');
+            return alert('An unexpected error has occurred.');
+        }
+
         if (response.payload.valid) {
             return navigate('/home');
         } 
