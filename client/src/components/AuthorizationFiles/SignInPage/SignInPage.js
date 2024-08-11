@@ -47,7 +47,7 @@ const SignInPage = () => {
             
             navigate('/welcome');
         } else {
-            if (!response.error) {
+            if (response.error) {
                 setError(response.error);
             } else {
                 setError('An unexpected error has occurred.');
