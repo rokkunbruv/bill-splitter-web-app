@@ -75,7 +75,7 @@ const signup = async (req, res) => {
     });
 
     if (!isPasswordStrong) {
-      return res.status(400).json({ message: 'Password should be at least 8 characters long and include at least one lowercase letter, one uppercase letter, and one number.' });
+      return res.status(400).json({ message: 'Password should be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character.' });
     }
 
     if (password !== confirmPassword) {
@@ -316,7 +316,7 @@ const resetPassword = async (req, res) => {
     });
 
     if (!isPasswordStrong) {
-      return res.status(400).json({ message: 'Password should be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one symbol.' });
+      return res.status(400).json({ message: 'Password should be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character.' });
     }
 
     if (password !== confirmPassword) {

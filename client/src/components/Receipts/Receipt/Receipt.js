@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardActions, CardContent, Button, Typography, Box, SwipeableDrawer, IconButton, AppBar, BottomNavigation } from '@mui/material';
+import { Card, CardContent, Button, Typography, Box, SwipeableDrawer, IconButton, AppBar, BottomNavigation } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { deleteReceipt } from '../../../actions/receipts';

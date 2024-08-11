@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Container, AppBar, Typography, Box, SvgIcon, Button } from '@mui/material';
-import { BrowserRouter as Router, Route, Routes, Link, useLocation, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Container, Box } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import ReceiptList from './components/ReceiptList/ReceiptList';
 import AddReceipt from './components/AddReceipt/AddReceipt';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardContent, Typography, Button, Grid, Box, TextField, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Slider from 'react-slick';
 import { getReceipts, updateReceiptSplit, createReceipt } from '../../actions/receipts';
 import { getMembers } from '../../actions/members';

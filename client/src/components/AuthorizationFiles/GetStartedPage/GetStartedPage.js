@@ -34,6 +34,7 @@ const GetStartedPage = () => {
         }
 
         console.error('An unexpected error has occurred.');
+        alert('An unexpected error has occurred.');
     }
 
     return (

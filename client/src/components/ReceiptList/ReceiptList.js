@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, CircularProgress, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Grid, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { getReceipts } from '../../actions/receipts';
 import Receipt from '../Receipts/Receipt/Receipt';

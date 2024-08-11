@@ -65,6 +65,7 @@ const VerifyPasswordCode = () => {
 
     if (!email) {
       console.error('Email not dispatched');
+      alert('Email not dispatched');
       return;
     }
 

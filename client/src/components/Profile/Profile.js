@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import {ReactComponent as ProfileIcon} from '../icons/profile1.svg';
-import {ReactComponent as EditIcon} from '../icons/edit.svg';
+import { ReactComponent as ProfileIcon } from '../icons/profile1.svg';
+import { ReactComponent as EditIcon } from '../icons/edit.svg';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { verifyToken } from '../../actions/auth';
@@ -31,8 +31,10 @@ const Profile = () => {
         } else {
           if (response.error) {
             console.error(response.error);
+            alert(response.error);
           } else {
             console.error('An unexpected error has occurred.');
+            alert('An unexpected error has occurred.');
           }
         }
       }

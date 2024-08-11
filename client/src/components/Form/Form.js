@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { TextField, Button, Paper } from '@mui/material';
 import FileBase from 'react-file-base64';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { createReceipt } from '../../actions/receipts';
 import { getMembers } from '../../actions/members';
