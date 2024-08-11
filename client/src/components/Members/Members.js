@@ -32,7 +32,7 @@ const Members = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (newMember.trim()) {
-            dispatch(addMember(newMember));
+            dispatch(addMember(newMember, token));
             setNewMember('');
         }
     };

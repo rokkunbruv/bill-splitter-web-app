@@ -23,8 +23,12 @@ export const updateReceiptSplit = (id, splitData, token) => axios.patch(`${url}/
 });
 
 // New member-related API calls
-export const fetchMembers = () => axios.get(`${url}/members`);
-export const createMember = (name) => axios.post(`${url}/members`, { name });
+export const fetchMembers = (token) => axios.get(`${url}/members`, {
+        headers: { Authorization: `Bearer ${token}` }
+});
+export const createMember = (name, token) => axios.post(`${url}/members`, { name }, {
+        headers: { Authorization: `Bearer ${token}` }
+});
 
 // Authorization API calls
 export const signup = (name, email, password, confirmPassword) => axios.post(`${url}/api/auth/signup`, { name, email, password, confirmPassword });
