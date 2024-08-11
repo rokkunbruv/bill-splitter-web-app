@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Grid, CircularProgress } from '@mui/material';
+import { Grid, CircularProgress, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { getReceipts } from '../../actions/receipts';
@@ -10,34 +10,54 @@ const ReceiptList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const receipts = useSelector((state) => state.receipts);
+    const [loading, setLoading] = useState(true);  // Loading state
 
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        dispatch(getReceipts(token));
-    }, [dispatch]);
+        const fetchReceipts = async () => {
+            await dispatch(getReceipts(token));
+            setLoading(false);  // Set loading to false once data is fetched
+        };
 
-    // redirects to getting started page when user isn't authenticated
+        fetchReceipts();
+    }, [dispatch, token]);
+
+    // Redirects to getting started page when user isn't authenticated
     useEffect(() => {
         const isAuthenticated = localStorage.getItem("token");
         
         if (!isAuthenticated) {
             navigate("/");
         }
-    });
+    }, [navigate]);
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (receipts.length === 0) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Typography variant="h6">You didn't split any bills yet!</Typography>
+            </Box>
+        );
+    }
 
     return (
         <div>
             {/* <Typography>Split History</Typography> */}
-            {!receipts.length ? <CircularProgress /> : (
-                <Grid container spacing={1}>
-                    {receipts.map((receipt) => (
-                        <Grid key={receipt._id} item xs={12}>
-                            <Receipt receipt={receipt} />
-                        </Grid>
-                    ))}
-                </Grid>
-            )}
+            <Grid container spacing={1}>
+                {receipts.map((receipt) => (
+                    <Grid key={receipt._id} item xs={12}>
+                        <Receipt receipt={receipt} />
+                    </Grid>
+                ))}
+            </Grid>
         </div>
     );
 }

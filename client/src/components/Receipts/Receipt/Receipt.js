@@ -11,6 +11,8 @@ const Receipt = ({ receipt }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const token = localStorage.getItem("token");
+
     // redirects to getting started page when user isn't authenticated
     useEffect(() => {
         const isAuthenticated = localStorage.getItem("token");
@@ -26,6 +28,14 @@ const Receipt = ({ receipt }) => {
 
     const handleCloseDrawer = () => {
         setDrawerOpen(false);
+    };
+
+    const handleDelete = () => {
+        if (token) {
+            dispatch(deleteReceipt(receipt._id, token));
+        } else {
+            console.error("No token found, unable to delete the receipt.");
+        }
     };
 
     return (
@@ -97,7 +107,7 @@ const Receipt = ({ receipt }) => {
                     <Button component={Link} to={`/split-receipt/${receipt._id}`} size="small" color="primary">
                         Split
                     </Button>
-                    <Button size="small" color="primary" onClick={() => dispatch(deleteReceipt(receipt._id))}>
+                    <Button size="small" color="primary" onClick={handleDelete}>
                         <DeleteIcon fontSize='small' />
                         Delete
                     </Button>

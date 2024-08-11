@@ -30,7 +30,7 @@ const Form = ({ imageData }) => {  // Add imageData as a prop
         e.preventDefault();
         dispatch(createReceipt(receiptData, token));
         clear();
-        navigate(`/`);
+        navigate(`/home`);
     };
 
     const clear = () => {

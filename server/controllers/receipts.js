@@ -5,7 +5,7 @@ import Member from '../models/member.js'; // Import the Member model
 
 export const getReceipts =  async (req, res) => {
     try {
-        const receiptMessages = await ReceiptMessage.find();
+        const receiptMessages = await ReceiptMessage.find({ userId: req.user._id });
 
         console.log(receiptMessages);
 
@@ -53,7 +53,7 @@ export const createReceipt = async (req, res) => {
 
     try {
          //Fetch all members
-        const members = await Member.find().exec();
+         const members = await Member.find({ userId: req.user._id }).exec();
 
         // Check if receipt.users exists, if not, initialize it as an empty array
         const users = receipt.users || [];
@@ -67,6 +67,7 @@ export const createReceipt = async (req, res) => {
 
         // Create a new ReceiptMessage document
         const newReceipt = new ReceiptMessage({
+            userId: req.user._id,
             event: receipt.event,
             uploadedFile: receipt.uploadedFile,
             gptResponse: gptResponse,
@@ -94,15 +95,22 @@ export const updateReceipt = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No receipt with that id');
 
+    const existingReceipt = await ReceiptMessage.findOne({ _id, userId: req.user._id }); // Check ownership
+
+    if (!existingReceipt) return res.status(404).send('Receipt not found or not authorized');
+
     const updatedReceipt = await ReceiptMessage.findByIdAndUpdate(_id, { ...receipt, _id }, { new: true });
 
     res.json(updatedReceipt);
 }
-
 export const deleteReceipt = async (req, res) => {
     const { id } = req.params; 
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+
+    const receipt = await ReceiptMessage.findOne({ _id: id, userId: req.user._id }); // Check ownership
+
+    if (!receipt) return res.status(404).send('Receipt not found or not authorized');
 
     await ReceiptMessage.findByIdAndDelete(id);
 
@@ -115,7 +123,9 @@ export const assignItemToUser = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No receipt with that id');
 
-    const receipt = await ReceiptMessage.findById(id);
+    const receipt = await ReceiptMessage.findOne({ _id: id, userId: req.user._id });
+
+    if (!receipt) return res.status(404).send('Receipt not found or not authorized');
 
     const userIndex = receipt.usersWithItems.findIndex(u => u.userName === user);
     if (userIndex !== -1) {
@@ -152,17 +162,17 @@ export const updateReceiptSplit = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No receipt with that id');
 
-    const updatedReceipt = await ReceiptMessage.findById(id);
+    const receipt = await ReceiptMessage.findOne({ _id: id, userId: req.user._id }); // Check ownership
 
-    if (!updatedReceipt) return res.status(404).send('Receipt not found');
+    if (!receipt) return res.status(404).send('Receipt not found or not authorized');
 
-    updatedReceipt.usersWithItems = Object.entries(usersSplit).map(([userName, data]) => ({
+    receipt.usersWithItems = Object.entries(usersSplit).map(([userName, data]) => ({
         userName,
         items: data.items,
         bill: data.total
     }));
 
-    await updatedReceipt.save();
+    await receipt.save();
 
-    res.json(updatedReceipt);
+    res.json(receipt);
 };
