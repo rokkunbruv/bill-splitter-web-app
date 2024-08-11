@@ -11,7 +11,7 @@ const ReceiptList = () => {
     const navigate = useNavigate();
     const receipts = useSelector((state) => state.receipts);
 
-    const token = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         dispatch(getReceipts(token));
