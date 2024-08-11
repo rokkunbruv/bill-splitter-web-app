@@ -36,7 +36,9 @@ export const deleteReceipt = (id, token) => async (dispatch) => {
 
         dispatch({ type: 'DELETE', payload: id });
     } catch (error) {
-        console.log(error);
+        console.error('Delete receipt error:', error.response?.data || error.message);
+        // Optionally dispatch an error action here
+        console.log('Token:', token);
     }
 }
 

@@ -26,7 +26,7 @@ const ReceiptList = () => {
         }
     });
 
-    if (!receipts.length) {
+    if (!receipts) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
