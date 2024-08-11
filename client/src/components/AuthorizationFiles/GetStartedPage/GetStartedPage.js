@@ -16,7 +16,6 @@ const GetStartedPage = () => {
         event.preventDefault();
 
         const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
 
         if (!token) {
             return navigate('sign-up-page');
@@ -24,14 +23,12 @@ const GetStartedPage = () => {
 
         const response = await dispatch(verifyToken(token));
 
-        if (response.payload.valid && response.payload.user.userId === userId) {
+        if (response.payload.valid) {
             return navigate('/home');
         } 
 
-        if (!response.payload.valid || response.payload.user.userId != userId) {
+        if (!response.payload.valid) {
             localStorage.removeItem("token");
-            localStorage.removeItem("userId");
-            localStorage.removeItem("username")
             
             return navigate('/sign-up-page');
         }
