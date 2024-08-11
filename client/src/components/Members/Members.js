@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, List, ListItem, ListItemText, TextField, Button, Paper, Box, Drawer, IconButton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMember, getMembers } from '../../actions/members';
+import { addMember, getMembers, deleteMember } from '../../actions/members';
 import { useNavigate } from 'react-router-dom';
 
 import {ReactComponent as FriendIcon} from '../icons/friendIcon.svg';
 import {ReactComponent as AddFriendIcon} from '../icons/addFriendIcon.svg';
+
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Members = () => {
     const [newMember, setNewMember] = useState('');
@@ -18,7 +20,7 @@ const Members = () => {
 
     useEffect(() => {
         dispatch(getMembers(token));
-    }, [dispatch]);
+    }, [dispatch, token]);
 
     // redirects to getting started page when user isn't authenticated
     useEffect(() => {
@@ -32,9 +34,17 @@ const Members = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (newMember.trim()) {
-            dispatch(addMember(newMember));
+            dispatch(addMember(newMember, token));
             setNewMember('');
         }
+    };
+
+    const handleDelete = (id) => {
+        const token = localStorage.getItem("token");
+        console.log("Deleting member with ID:", id); // Add this line
+        dispatch(deleteMember(id, token))
+            .then(() => console.log("Member deleted successfully"))
+            .catch(error => console.error("Error deleting member:", error));
     };
 
     const handleAddNewFriend = () => {
@@ -73,7 +83,12 @@ const Members = () => {
                     </Box>
                     <List>
                         {members.map((member, index) => (
-                            <ListItem key={index}>
+                            <ListItem key={index} 
+                                      secondaryAction={
+                                          <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(member._id)}>
+                                              <DeleteIcon />
+                                          </IconButton>
+                                      }>
                                 <ListItemText primary={member.name} />
                             </ListItem>
                         ))}

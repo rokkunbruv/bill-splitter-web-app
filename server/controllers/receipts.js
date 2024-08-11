@@ -4,6 +4,8 @@ import getReceiptInfo from '../services/openai.js';
 import Member from '../models/member.js'; // Import the Member model
 
 export const getReceipts =  async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     try {
         const receiptMessages = await ReceiptMessage.find({ userId: req.user._id });
 
@@ -18,6 +20,8 @@ export const getReceipts =  async (req, res) => {
 
 //add
 export const createReceipt = async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     const receipt = req.body;
 
     // const gptResponse = await getReceiptInfo(receipt.uploadedFile)
@@ -90,6 +94,8 @@ export const createReceipt = async (req, res) => {
 
 
 export const updateReceipt = async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     const { id: _id } = req.params;
     const receipt = req.body;
 
@@ -104,6 +110,8 @@ export const updateReceipt = async (req, res) => {
     res.json(updatedReceipt);
 }
 export const deleteReceipt = async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     const { id } = req.params; 
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
@@ -118,6 +126,8 @@ export const deleteReceipt = async (req, res) => {
 }
 
 export const assignItemToUser = async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     const { id } = req.params;
     const { user, item } = req.body;
 
@@ -157,6 +167,8 @@ export const assignItemToUser = async (req, res) => {
 };
 
 export const updateReceiptSplit = async (req, res) => {
+    console.log("User ID:", req.user._id);
+
     const { id } = req.params;
     const usersSplit = req.body;
 
