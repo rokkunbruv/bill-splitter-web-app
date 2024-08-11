@@ -14,7 +14,7 @@ const Members = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         dispatch(getMembers(token));

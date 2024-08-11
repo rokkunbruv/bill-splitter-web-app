@@ -32,7 +32,7 @@ const SplitReceipt = () => {
     const [currentItem, setCurrentItem] = useState(null);
     const [totalAssignedQuantities, setTotalAssignedQuantities] = useState({});
 
-    const token = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         dispatch(getMembers(token));
