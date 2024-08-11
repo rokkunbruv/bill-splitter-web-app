@@ -4,7 +4,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { deleteReceipt } from '../../../actions/receipts';
 import { Link, useNavigate } from 'react-router-dom';
-import ViewDetails from '../../ViewDetails/ViewDetails';
 
 const Receipt = ({ receipt }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);

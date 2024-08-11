@@ -204,7 +204,6 @@ const VerifyPasswordCode = () => {
                   marginTop: '15px',
                   color: '#070F2B',
                   fontWeight: 400,
-                  fontWeight: 'bold'
                 }}
               >
                 Didn't receive a code?
