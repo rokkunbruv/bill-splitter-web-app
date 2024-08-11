@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://localhost:5000';
+const url = `http://localhost:5555`;
 
 // Existing receipt-related API calls
 export const fetchReceipts = (token) => axios.get(`${url}/receipts`, {

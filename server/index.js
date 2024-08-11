@@ -28,7 +28,7 @@ app.use('/members', memberRoutes);
 app.use('/api/auth', router);
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 mongoose.connect(CONNECTION_URL)
     .then(() => app.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))

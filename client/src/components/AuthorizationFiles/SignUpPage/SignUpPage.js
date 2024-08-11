@@ -237,7 +237,7 @@ const SignUpPage = () => {
                                             onClick={handleClickShowPassword}
                                             onMouseDown={handleMouseDownPassword}
                                         >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                                 ),

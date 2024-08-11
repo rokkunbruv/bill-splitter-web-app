@@ -6,16 +6,15 @@ import { useNavigate } from 'react-router-dom';
 const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
     const navigate = useNavigate();
     
-    // redirects to getting started page when user isn't authenticated
     useEffect(() => {
         const isAuthenticated = localStorage.getItem("token");
-        
         if (!isAuthenticated) {
             navigate("/");
         }
-    });
+    }, [navigate]);
 
-    const usersWithItems = Array.isArray(receipt.usersWithItems) ? receipt.usersWithItems : [];
+    // Check if receipt is available and if usersWithItems is defined
+    const usersWithItems = receipt && Array.isArray(receipt.usersWithItems) ? receipt.usersWithItems : [];
 
     // Calculate total bill
     const totalBill = usersWithItems.reduce((total, user) => {
@@ -43,7 +42,7 @@ const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
                 }}}
         >
             <Box sx={{ padding: 2 }}>
-            <AppBar
+                <AppBar
                     sx={{
                         width: '100%',
                         height: '10%',
@@ -77,7 +76,9 @@ const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
                                 fontWeight: 'bold'
                             }}
                         >
-                            <Typography variant="h7"sx={{ textAlign: 'left', fontSize: '30px'}}>{receipt.event}</Typography>
+                            <Typography variant="h7" sx={{ textAlign: 'left', fontSize: '30px' }}>
+                                {receipt ? receipt.event : 'Loading...'}
+                            </Typography>
                             <Box sx={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <Typography variant="h7" sx={{opacity: '0.5'}}>Total Bill</Typography>
                                 <Typography variant="h7">{totalBill.toFixed(2)}</Typography>
@@ -92,12 +93,12 @@ const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
                             </Box>
                             <Box sx={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <Typography variant="h7" sx={{opacity: '0.5'}}>Status</Typography>
-                                <Typography variant="h7" color= 'success.main'>(Status diri!)</Typography>
+                                <Typography variant="h7" color='success.main'>(Status diri!)</Typography>
                             </Box>
                         </Card>
                     </Grid>
-
-                    <Card sx={{
+                    <Grid item xs={12}>
+                        <Card sx={{
                                 padding: 2,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -110,35 +111,35 @@ const ViewDetails = ({ open, onClose, receipt, shareAmounts }) => {
                                 marginLeft: 2,
                                 marginTop: 2
                             }}
-    
-                    >
-                        <Typography variant="h7"sx={{ textAlign: 'left', fontSize: '30px'}}>Member Report</Typography>
-                        {usersWithItems.map((user, index) => {
-                            const userTotal = Array.isArray(user.items)
-                                ? user.items.reduce((total, item) => total + (item.quantity * item.price), 0)
-                                : 0;
-                            const userShare = parseFloat(shareAmounts[index]) || 0;
-                            const userChange = userShare - userTotal;
+                        >
+                            <Typography variant="h7" sx={{ textAlign: 'left', fontSize: '30px' }}>Member Report</Typography>
+                            {usersWithItems.map((user, index) => {
+                                const userTotal = Array.isArray(user.items)
+                                    ? user.items.reduce((total, item) => total + (item.quantity * item.price), 0)
+                                    : 0;
+                                const userShare = parseFloat(shareAmounts[index]) || 0;
+                                const userChange = userShare - userTotal;
 
-                            return (
-                                <Grid item xs={12} key={index}>
-                                    <Card sx={{ padding: 2, boxShadow: 3, borderRadius: '8px' }}>
-                                        <Typography variant="h7" fontWeight='bold' fontSize='20px'>{user.userName || `User ${index + 1}`}</Typography>
-                                        {Array.isArray(user.items) && user.items.map((item, itemIndex) => (
-                                            <Typography key={itemIndex}>
-                                                {item.name}: ${item.quantity * item.price} ({item.quantity} x ${item.price.toFixed(2)})
+                                return (
+                                    <Grid item xs={12} key={index}>
+                                        <Card sx={{ padding: 2, boxShadow: 3, borderRadius: '8px' }}>
+                                            <Typography variant="h7" fontWeight='bold' fontSize='20px'>{user.userName || `User ${index + 1}`}</Typography>
+                                            {Array.isArray(user.items) && user.items.map((item, itemIndex) => (
+                                                <Typography key={itemIndex}>
+                                                    {item.name}: ${item.quantity * item.price} ({item.quantity} x ${item.price.toFixed(2)})
+                                                </Typography>
+                                            ))}
+                                            <Typography variant="h7" fontWeight='bold' fontSize='20px' color="primary">
+                                                Total: ${userTotal.toFixed(2)}
                                             </Typography>
-                                        ))}
-                                        <Typography variant="h7" fontWeight='bold' fontSize='20px' color="primary">
-                                            Total: ${userTotal.toFixed(2)}
-                                        </Typography>
-                                        <Typography>Share: ${userShare.toFixed(2)}</Typography>
-                                        <Typography>Change: ${userChange.toFixed(2)}</Typography>
-                                    </Card>
-                                </Grid>
-                            );
-                        })}
-                    </Card>
+                                            <Typography>Share: ${userShare.toFixed(2)}</Typography>
+                                            <Typography>Change: ${userChange.toFixed(2)}</Typography>
+                                        </Card>
+                                    </Grid>
+                                );
+                            })}
+                        </Card>
+                    </Grid>
                 </Grid>
             </Box>
         </Drawer>

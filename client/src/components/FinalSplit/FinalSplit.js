@@ -48,6 +48,7 @@ const FinalSplit = () => {
 
     const handleViewDetailsOpen = () => {
         setViewDetailsDrawerOpen(true);
+        setYippieDrawerOpen(false);
     };
 
     const handleViewDetailsClose = () => {
